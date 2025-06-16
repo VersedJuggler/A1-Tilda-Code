@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+
+  <script src="reviewsData.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>Отзывы — A1 Brokers Group</title>
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: #f6f6f6;
+      margin: 0;
+      padding: 0;
+      color: #111;
+      letter-spacing: -0.04em;
+    }
+    .reviews-section {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding-left: 65px;
+      padding-right: 65px;
+    }
+    .reviews-title {
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1.1;
+      margin-bottom: 32px;
+      max-width: 830px;
+    }
+    .reviews-filters {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      background: #f0f0f0;
+      border-radius: 40px;
+      padding: 6px;
+      width: fit-content;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .reviews-filters .filter-active {
+      background: #ffffff;
+      border-radius: 40px;
+      padding: 18px 50px;
+      font-weight: 500;
+      color: #111;
+    }
+    .reviews-filters .filter-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 20px;
+      font-weight: 500;
+      padding-right: 15px;
+    }
+    .reviews-filters img {
+      width: 28px;
+      height: 28px;
+      vertical-align: middle;
+    }
+    .reviews-meta {
+      margin: 16px 0 32px 0;
+      color: #888;
+      font-size: 16px;
+    }
+    .reviews-cards {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+    .review-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      padding: 28px 24px 20px 24px;
+      width: 290px;
+      display: flex;
+      flex-direction: column;
+      min-height: 390px;
+    }
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .review-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e3eaf2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .review-avatar.blue { background: #3b82f6; }
+    .review-avatar.orange { background: #f59e42; }
+    .review-avatar.green { background: #4ade80; }
+    .review-avatar.purple { background: #a78bfa; }
+    .review-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #222;
+    }
+    .review-stars {
+      margin-left: auto;
+      color: #ffc700;
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+    .review-text {
+      font-size: 15px;
+      color: #222;
+      margin-bottom: 10px;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+    .review-readmore {
+      color: #111;
+      font-weight: 500;
+      text-decoration: none;
+      font-size: 15px;
+      margin-bottom: 8px;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+    .review-readmore:hover {
+      color: #3b82f6;
+    }
+    .review-source {
+      color: #3b82f6;
+      font-size: 15px;
+      text-decoration: none;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .review-broker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: auto;
+      font-size: 15px;
+      color: #888;
+    }
+    .review-broker img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .review-broker span {
+      font-weight: 600;
+      color: #222;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e3eaf2;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .carousel-dot.active {
+      background: #3b82f6;
+    }
+  </style>
+</head>
+<body>
+  <div class="reviews-section">
+    <div class="reviews-title">Главный показатель качества нашей работы — счастливый клиент</div>
+    <div class="reviews-filters">
+      <span class="filter-active">Все отзывы</span>
+      <span class="filter-rating"><img src="https://disk.yandex.ru/i/t4I6PoeTeShTEA" alt="2GIS">5.0</span>
+    </div>
+    <div class="reviews-meta">126 отзывов из 2GIS</div>
+    <div class="reviews-cards" id="reviews-cards"></div>
+    <div class="carousel-dots" id="carousel-dots"></div>
+  </div>
+  <script>
+    // Отзывы будут подгружаться с 2GIS, структура для парсера
+    // reviewsData должен быть массивом объектов с полями: name, text, stars, brokerName, brokerPhoto
+    // Пример:
+    // const reviewsData = [
+    //   { name: 'Имя', text: 'Текст отзыва', stars: 5, brokerName: 'ФИО брокера', brokerPhoto: 'url' }, ...
+    // ];
+    // Здесь reviewsData должен быть определён парсером 2GIS
+    
+    // Для примера, если парсер уже вставил массив reviewsData:
+    // Если reviewsData не определён, используем пустой массив
+    const reviews = (typeof reviewsData !== 'undefined' && Array.isArray(reviewsData)) ? reviewsData.map(r => ({
+      avatar: r.name ? r.name[0].toUpperCase() : '',
+      avatarColor: ['blue','orange','green','purple'][Math.floor(Math.random()*4)],
+      name: r.name || '',
+      stars: r.stars || 5,
+      text: r.text || '',
+      readmore: r.readmore || '#',
+      source: '2ГИС',
+      sourceLink: r.sourceLink || '#',
+      broker: {
+        name: r.brokerName || '',
+        photo: r.brokerPhoto || '',
+      }
+    })) : [];
+
+    // Если reviews пустой, можно показать заглушку или ничего не выводить
+    const cardsPerPage = 4;
+    let currentPage = 0;
+    const reviewsCards = document.getElementById('reviews-cards');
+    const carouselDots = document.getElementById('carousel-dots');
+    const totalPages = Math.ceil(reviews.length / cardsPerPage);
+
+    function renderCards(page) {
+      reviewsCards.innerHTML = '';
+      const start = page * cardsPerPage;
+      const end = start + cardsPerPage;
+      reviews.slice(start, end).forEach(r => {
+        reviewsCards.innerHTML += `
+          <div class="review-card">
+            <div class="review-header">
+              <div class="review-avatar ${r.avatarColor}">${r.avatar}</div>
+              <div class="review-name">${r.name}</div>
+              <div class="review-stars">${'★'.repeat(r.stars)}</div>
+            </div>
+            <div class="review-text">${r.text}</div>
+            ${r.readmore && r.readmore !== '#' ? `<a class="review-readmore" href="${r.readmore}" target="_blank">Читать далее →</a>` : ''}
+            <a class="review-source" href="${r.sourceLink}" target="_blank">Отзыв из ${r.source}</a>
+            <div class="review-broker">
+              ${r.broker.photo ? `<img src="${r.broker.photo}" alt="${r.broker.name}">` : ''}
+              <span>Брокер по недвижимости:<br>${r.broker.name}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderDots() {
+      carouselDots.innerHTML = '';
+      for (let i = 0; i < totalPages; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot' + (i === currentPage ? ' active' : '');
+        dot.addEventListener('click', () => {
+          currentPage = i;
+          renderCards(currentPage);
+          renderDots();
+        });
+        carouselDots.appendChild(dot);
+      }
+    }
+
+    if (reviews.length > 0) {
+      renderCards(currentPage);
+      renderDots();
+    } else {
+      reviewsCards.innerHTML = '<div style="color:#888;font-size:18px;text-align:center;width:100%">Нет отзывов</div>';
+    }
+  </script>
+</body>
+</html>

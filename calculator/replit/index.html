@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ипотечный калькулятор</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Подключение inputmask -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/jquery.inputmask.min.js"></script>
+  
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+
+   #rec855153022 {
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+    body {
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      background-color: #F6F6F6;
+    }
+
+    #containerCalculator {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .animate-slide-in {
+      animation: slideIn 0.5s ease-in-out;
+    }
+
+    .contentCalculator {
+      padding: 3.75rem 3.75rem 0.2rem 3.75rem;
+      max-width: 2160px;
+      width: 100%;
+      margin: 0 auto;
+    } 
+
+    .main-title-container {
+      max-width: 35rem;
+    }
+
+    .main-title {
+      font-size: 3rem; /* 48px при базовом размере 16px */
+      margin-bottom: 1.25rem;
+    }
+
+    .main-title-description {
+      max-width: 40rem;
+      font-size: 1rem; /* 16px */
+      margin-bottom: 1.25rem;
+    }
+
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    input {
+      max-width: 14rem;
+      height: 2.5rem;
+      border: none;
+      background-color: white;
+    }
+
+    .input-error {
+      border-color: red;
+      background-color: #ffe6e6;
+    }
+
+    select {
+      height: 2.5rem;
+      background-color: white;
+    }
+
+    /* Доп адаптивность для десктопных устройств*/
+    @media (min-width: 769px) {
+
+    #monthlyPaymentMobile {
+      display: none;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      justify-content: flex-start;
+    } 
+
+    .buttons button, .buttons a {
+      width: 255px;
+      height: 4rem;
+      font-size: 14px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .buttons a {
+      color: black;
+      border: 1px solid black;
+    }
+
+    /* Анимация при наведении */
+    .buttons button:hover, .buttons a:hover {
+      transform: scale(1.05);
+    }
+
+    .payment-type-container {
+      display: flex;
+      flex-direction: row; 
+      gap: 2rem; 
+    }
+
+    .payment-type-container label {
+      display: flex;
+      align-items: center; 
+      gap: 0.5rem;
+    }
+
+    .payment-type-container input[type="radio"] {
+      width: 1.2rem; 
+      height: 1.2rem; 
+      accent-color: black; 
+    }
+  }
+
+    /* Адаптивность для мобильных устройств*/
+    @media (max-width: 768px) {
+
+    body {
+      text-align: left;
+    }
+
+    .contentCalculator {
+      padding: 1.875rem 1.875rem 0.2rem 1.875rem;
+    }
+
+    .contentCalculator {
+      align-items: flex-start; 
+      justify-content: flex-start; 
+      text-align: left; 
+    }
+
+    .main-title-container {
+      max-width: 18rem;
+    } 
+
+    .main-title {
+      font-size: 1.75rem; /* 28px */
+      margin-bottom: 0px;
+      line-height: 1;
+    }
+
+    .main-title-description {
+      max-width: 266px;
+      font-size: 0.75rem; /* 12px */
+    }
+        
+      h2 {
+        font-size: 1.5rem;
+      }
+      .flex {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      input, select {
+        width: 100%;
+      }
+      
+      .buttons {
+        display: flex;
+        flex-direction: column; 
+        gap: 1rem;
+        align-items: stretch;
+      }
+
+      .buttons a {
+        border: black;
+        border: 1px solid black;
+      }
+
+      .buttons button, .buttons a {
+        width: 100%;
+        max-width: 25rem; 
+        margin: 0 auto;
+        height: 3.5rem; 
+        font-size: 1rem; 
+        border-radius: 4px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+      .buttons button:nth-child(2) {
+        border: 1px solid black; 
+        background-color: white; 
+        color: black; 
+    }
+
+      #monthlyPaymentDesktop {
+        display: none;
+      }
+
+      #monthlyPaymentMobile {
+        display: none;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+
+      #monthlyPaymentMobile.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #monthlyPaymentMobile h2 {
+        font-size: 1.167rem;
+      }
+
+       /* Уменьшение радиокнопок и их выравнивание */
+      .flex.space-x-4 label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; 
+     }
+
+      .flex.space-x-4 input[type="radio"] {
+        transform: scale(1); 
+        margin: 0;
+        width: 1rem;
+        height: 1rem; 
+     }
+
+      .payment-type-container {
+        display: flex;
+        flex-direction: column; 
+        gap: 1rem; 
+      }
+
+      .payment-type-container label {
+        display: flex;
+        align-items: center; 
+        gap: 0.5rem; 
+      }
+
+      .payment-type-container input[type="radio"] {
+        width: 1rem;
+        height: 1rem;
+        accent-color: black;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.25rem;
+      }
+      input, select {
+        font-size: 0.9rem;
+      }
+
+      .input-group,
+      .flex.items-center {
+        display: flex;
+        align-items: center;
+      }
+
+      .flex.items-center select,
+      .input-group select {
+        margin-left: 0.5rem;
+      }
+
+      .flex.items-center span {
+        margin-left: 0.5rem;
+      }
+
+      .flex.space-x-4 {
+        flex-direction: row;
+      }
+
+      .flex.space-x-4 label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+
+      .input-group {
+        display: flex;
+        align-items: center;
+      }
+
+      .input-group select {
+        margin-left: 0.5rem;
+      }
+
+      
+  </style>
+</head>
+<body id="containerCalculator" class="mx-auto">
+  <!-- Основной контейнер калькулятора -->
+<div class="containerCenter">
+  <div class="contentCalculator">
+    <!-- Заголовок и описание -->
+    <div class="flex flex-wrap justify-between items-start mb-5 max-w-[69rem]">
+      <div class="main-title-container flex-1 h-auto flex flex-col justify-between">
+        <h1 class="main-title tracking-tight">Ипотечный калькулятор</h1>
+        <p class="main-title-description text-gray-600 tracking-tight">
+          Получите предварительный расчёт по ипотеке, заполните анкету и получите предложения по ставке ниже, чем в банке. Брокер проконсультирует вас бесплатно.
+        </p>
+      </div>
+      <!-- Блок с ежемесячным платежом для десктопа -->
+      <div id="monthlyPaymentDesktop" class="flex-1 min-w-[18rem] max-w-[28rem] max-h-[12rem] bg-white p-6 rounded-md">
+        <h2 class="text-[1.75rem] tracking-tight">Ежемесячный платеж</h2>
+        <p id="monthlyPaymentDesktopDisplay" class="text-[2.25rem] font-semibold">0</p>
+        <p id="downPaymentDisplayDesktop" class="text-[1.2rem] mt-3 text-black tracking-tight">Первоначальный взнос — 0</p>
+      </div>  
+    </div>
+
+    <!-- Раздел "По стоимости недвижимости" -->
+    <div class="mb-10">
+      <h1 class="text-lg font-normal tracking-tight">По стоимости недвижимости</h1>
+      <div class="max-w-[255px] h-[2px] bg-black mt-1"></div>
+    </div>
+
+    <!-- Первая строка ввода данных -->
+    <div class="flex flex-wrap space-y-4 md:space-y-0 md:space-x-10 items-start mb-8">
+      <!-- Ввод стоимости недвижимости -->
+      <div>
+        <label class="block font-bold mb-1 tracking-tight">Стоимость недвижимости</label>
+        <div class="input-group">
+          <input id="propertyPrice" type="number" class="p-2 border rounded" placeholder="">
+          <select id="propertyCurrency" class="px-2 py-1 rounded max-w-[79px]">
+            <option value="rub">₽</option>
+            <option value="usd">$</option>
+          </select>
+        </div>
+        <p id="propertyPriceError" class="text-sm text-red-500 hidden mt-1">Максимальная стоимость — 100 млн</p>
+      </div>
+
+      <!-- Ввод первоначального взноса -->
+      <div>
+        <label class="block font-bold mb-1 tracking-tight">Первоначальный взнос</label>
+        <div class="input-group">
+          <input id="downPayment" type="number" class="p-2 border rounded" placeholder="">
+          <select id="downPaymentType" class="px-2 py-1 rounded max-w-[79px]">
+            <option value="rub">₽</option>
+            <option value="percent">%</option>
+          </select>
+        </div>
+        <p id="downPaymentError" class="text-sm text-red-500 hidden mt-1">Максимальный взнос — 50% или 50 млн ₽</p>
+      </div>
+
+      <!-- Отображение суммы кредита -->
+      <div>
+        <p class="block mb-2.5 font-bold tracking-tight">Сумма кредита</p>
+        <p id="loanAmountDisplay" class="text-lg font-semibold text-gray-700">0</p>
+      </div>
+    </div>
+
+    <!-- Вторая строка ввода данных -->
+    <div class="flex flex-wrap space-y-4 md:space-y-0 md:space-x-10 items-start mb-[3rem]">
+      <!-- Ввод срока кредита -->
+      <div>
+        <label class="block font-bold mb-1 tracking-tight">Срок кредита</label>
+        <div class="input-group">
+          <input id="loanTerm" type="number" class="p-2 border rounded" placeholder="">
+          <select id="loanTermType" class="px-2 py-1 rounded max-w-[128px]">
+            <option value="years">лет</option>
+            <option value="months">месяцев</option>
+          </select>
+        </div>
+        <p id="loanTermError" class="text-sm text-red-500 hidden mt-1">Максимальный срок — 30 лет или 360 месяцев</p>
+      </div>
+
+      <!-- Ввод процентной ставки -->
+      <div>
+        <label class="block font-bold mb-1 tracking-tight">Процентная ставка</label>
+        <div class="input-group">
+          <input id="interestRate" type="number" max="100" class="p-2 border rounded" placeholder="">
+          <span class="font-bold text-gray-600 shrink-0 ml-2">%</span>
+        </div>
+        <p id="interestRateError" class="text-sm text-red-500 hidden mt-1">Максимум — 100%</p>
+      </div>
+
+      <!-- Выбор типа ежемесячных платежей -->
+      <div>
+        <label class="block font-bold mb-3 tracking-tight">Тип ежемесячных платежей</label>
+        <div class="payment-type-container">
+          <label>
+            <input type="radio" name="paymentType" value="annuity" checked>
+            Аннуитетные
+          </label>
+          <label>
+            <input type="radio" name="paymentType" value="differentiated">
+            Дифференцированные
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Блок с кнопками (Нужно заменить на <a>, чтобы работал тильдовский pop-up)-->
+    <div class="buttons">
+      <button id="calculateButton" class="bg-black text-white rounded-md px-4 py-2">Рассчитать</button>
+      <a href="#consulting" id="consultationButton" class="bg-white text-black border border-black rounded-md px-4 py-2">Получить консультацию</a>
+    </div>
+    
+    <!-- Блок с ежемесячным платежом для мобильных устройств -->
+    <div id="monthlyPaymentMobile" class="flex-1 max-w-[20rem] max-h-[12rem] bg-white rounded-md mt-10 mb-10 p-6">
+      <h2 class="text-[1.25rem] tracking-tight">Ежемесячный платеж</h2>
+      <p id="monthlyPaymentMobileDisplay" class="text-[1.25rem] mb-2 font-bold">0</p>
+      <h2 class="text-[1.25rem] tracking-tight ">Первоначальный взнос</h2>
+      <p id="downPaymentDisplayMobile" class="text-[1.25rem] font-bold tracking-tight">0</p>
+    </div>
+  </div>
+</div>
+    <script>
+    
+    function setFixedHeightFor27Inch2K() {
+  const targetElement = document.getElementById('rec855153022');
+  if (!targetElement) return;
+
+  // 1. Определение физического разрешения
+  const physicalWidth = window.screen.width * window.devicePixelRatio;
+  const physicalHeight = window.screen.height * window.devicePixelRatio;
+
+  // 2. Расчет PPI (пикселей на дюйм)
+  const diagonalPixels = Math.sqrt(physicalWidth ** 2 + physicalHeight ** 2);
+  const ppi = diagonalPixels / 27; // 27" диагональ
+
+  // 3. Проверка условий для 2K 27"
+  const is27Inch2K = 
+    physicalWidth >= 2560 && 
+    physicalHeight >= 1440 &&
+    ppi >= 104 && ppi <= 114; // Допуск ±5 PPI
+
+  // 4. Применение стилей
+  if (is27Inch2K) {
+    targetElement.style.height = '1350px';
+    targetElement.style.transition = 'height 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+  } else {
+    targetElement.style.height = ''; // Сброс для других устройств
+  }
+}
+
+// Инициализация
+window.addEventListener('load', setFixedHeightFor27Inch2K);
+window.addEventListener('resize', setFixedHeightFor27Inch2K);
+
+// Для мгновенного обновления при изменении контента
+new MutationObserver(setFixedHeightFor27Inch2K)
+  .observe(document.body, { subtree: true, childList: true });
+
+const SCALE_CONFIG = [
+  // 27" 2K (2560x1440)
+  {
+    targetPPI: 109,     // PPI для 27" 2K
+    scale: 2.1,
+    tolerance: 3       // ±3 PPI
+  },
+  // 27" FullHD (1920x1080)
+  {
+    targetPPI: 82,      // PPI для 27" FullHD
+    scale: 1.55,
+    tolerance: 3
+  },
+  // 14" FullHD (1920x1080)
+  {
+    targetPPI: 157,     // PPI для 14" FullHD
+    scale: 1,
+    tolerance: 5
+  }
+];
+
+function calculatePPI() {
+  const width = screen.width * devicePixelRatio;
+  const height = screen.height * devicePixelRatio;
+  return Math.sqrt(width ** 2 + height ** 2) / 27; // Базовый расчет для 27"
+}
+
+function applyScale() {
+  const currentPPI = calculatePPI();
+  const container = document.querySelector('.contentCalculator');
+  
+  const matchedConfig = SCALE_CONFIG.find(config => 
+    Math.abs(currentPPI - config.targetPPI) <= config.tolerance
+  ) || { scale: 1 }; // Дефолтный масштаб
+
+  container.style.transform = `scale(${matchedConfig.scale})`;
+  container.style.transformOrigin = 'center top';
+}
+
+// Оптимизация ресайза
+let isThrottled = false;
+window.addEventListener('resize', () => {
+  if (!isThrottled) {
+    requestAnimationFrame(() => {
+      applyScale();
+      isThrottled = false;
+    });
+    isThrottled = true;
+  }
+});
+
+// Инициализация
+applyScale();
+
+    // Функция для обновления значения с анимацией
+    function updateMonthlyPayment(value) {
+      const desktopDisplay = document.getElementById('monthlyPaymentDesktopDisplay');
+      const mobileDisplay = document.getElementById('monthlyPaymentMobileDisplay');
+
+    // Обновляем текстовое содержимое
+      const updateValue = (element) => {
+      element.textContent = value;
+
+    // Добавляем класс для анимации
+      element.classList.add('animate-slide-in');
+
+    // Удаляем класс после завершения анимации
+      element.addEventListener('animationend', () => {
+      element.classList.remove('animate-slide-in');
+      }, { once: true });
+    };
+
+    // Обновляем оба элемента
+    updateValue(desktopDisplay);
+    updateValue(mobileDisplay);
+  }
+
+    // Пример вызова функции
+    document.getElementById('calculateButton').addEventListener('click', () => {
+    // Обновляем значение 0
+    updateMonthlyPayment('0');
+  });
+
+    // Ограничение для процентной ставки
+    document.getElementById('interestRate').addEventListener('input', function () {
+      const maxRate = 100;
+      const errorElement = document.getElementById('interestRateError');
+      if (this.value > maxRate) {
+        this.classList.add('input-error');
+        errorElement.classList.remove('hidden');
+      } else {
+        this.classList.remove('input-error');
+        errorElement.classList.add('hidden');
+      }
+    });
+    // Ограничение для стоимости
+    document.getElementById('propertyPrice').addEventListener('input', function () {
+      const maxPrice = 100000000; // Максимальная стоимость
+      const errorElement = document.getElementById('propertyPriceError');
+  
+      if (this.value > maxPrice) {
+        this.classList.add('input-error');
+        errorElement.classList.remove('hidden');
+      } else {
+      this.classList.remove('input-error');
+      errorElement.classList.add('hidden');
+      }
+    });
+
+    // Ограничение для первоначального взноса
+    document.getElementById('downPayment').addEventListener('input', function () {
+      const maxRub = 50000000; // Максимальный взнос в рублях
+      const maxPercent = 50; // Максимальный взнос в процентах
+      const downPaymentType = document.getElementById('downPaymentType').value;
+      const errorElement = document.getElementById('downPaymentError');
+      const value = parseFloat(this.value) || 0;
+
+      if ((downPaymentType === 'rub' && value > maxRub) || 
+        (downPaymentType === 'percent' && value > maxPercent)) {
+      this.classList.add('input-error');
+        errorElement.classList.remove('hidden');
+    } else {
+      this.classList.remove('input-error');
+      errorElement.classList.add('hidden');
+      }
+    });
+
+    // Ограничение для срока кредита
+    document.getElementById('loanTerm').addEventListener('input', function () {
+      const maxYears = 30; // Максимальный срок в годах
+      const maxMonths = 360; // Максимальный срок в месяцах
+      const loanTermType = document.getElementById('loanTermType').value;
+      const errorElement = document.getElementById('loanTermError');
+      const value = parseInt(this.value) || 0;
+
+      if ((loanTermType === 'years' && value > maxYears) || 
+        (loanTermType === 'months' && value > maxMonths)) {
+      this.classList.add('input-error');
+      errorElement.classList.remove('hidden');
+    } else {
+      this.classList.remove('input-error');
+      errorElement.classList.add('hidden');
+    }
+  });
+
+      // Функция форматирования числа с пробелами
+      function formatNumberWithSpaces(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      }
+    
+      // Синхронизация валюты между полями
+      function syncCurrency() {
+        const propertyCurrency = document.getElementById('propertyCurrency').value;
+        const downPaymentCurrency = document.getElementById('downPaymentType');
+    
+      // Изменение валюты для поля "Первоначальный взнос"
+      const options = downPaymentCurrency.options;
+          for (let i = 0; i < options.length; i++) {
+          if (options[i].value === 'percent') continue;
+          options[i].value = propertyCurrency;
+          options[i].textContent = propertyCurrency === 'usd' ? '$' : '₽';
+        }
+    
+        updateLoanAmount();
+        updateMonthlyPaymentDisplay();
+      }
+    
+      // Обновление суммы кредита
+      function updateLoanAmount() {
+        const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+        const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+        const downPaymentType = document.getElementById('downPaymentType').value;
+        const currency = document.getElementById('propertyCurrency').value;
+    
+        let loanAmount = 0;
+        if (downPaymentType === 'percent') {
+          loanAmount = propertyPrice - (propertyPrice * downPayment / 100);
+        } else {
+          loanAmount = propertyPrice - downPayment;
+        }
+    
+        const formattedLoanAmount = formatNumberWithSpaces(Math.round(loanAmount).toString());
+        document.getElementById('loanAmountDisplay').textContent = `${formattedLoanAmount} ${currency === 'usd' ? '$' : '₽'}`;
+      }
+    
+      // Обновление ежемесячного платежа
+      function updateDownPaymentDisplay() {
+  const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const downPaymentType = document.getElementById('downPaymentType').value;
+  const propertyCurrency = document.getElementById('propertyCurrency').value;
+
+  let downPaymentAmount = 0;
+
+  if (downPaymentType === 'percent') {
+    downPaymentAmount = propertyPrice * (downPayment / 100);
+  } else {
+    downPaymentAmount = downPayment;
+  }
+
+  const formattedDownPayment = formatNumberWithSpaces(Math.round(downPaymentAmount).toString());
+  const currencySymbol = propertyCurrency === 'usd' ? '$' : '₽';
+
+  // Обновляем десктопный блок
+  document.getElementById('downPaymentDisplayDesktop').textContent = `Первоначальный взнос — ${formattedDownPayment} ${currencySymbol}`;
+  
+  // Обновляем мобильный блок
+  document.getElementById('downPaymentDisplayMobile').textContent = `${formattedDownPayment} ${currencySymbol}`;
+}
+
+// Вызываем обновление суммы первоначального взноса при изменении соответствующих полей
+document.getElementById('propertyPrice').addEventListener('input', updateDownPaymentDisplay);
+document.getElementById('downPayment').addEventListener('input', updateDownPaymentDisplay);
+document.getElementById('downPaymentType').addEventListener('change', updateDownPaymentDisplay);
+document.getElementById('propertyCurrency').addEventListener('change', updateDownPaymentDisplay);
+
+// Обновляем отображение первоначального взноса при расчёте ежемесячного платежа
+document.getElementById('calculateButton').addEventListener('click', () => {
+  // ... (оставляем существующий код для расчёта ежемесячного платежа)
+  updateDownPaymentDisplay();
+});
+
+// Расчёт ежемесячного платежа
+document.getElementById('calculateButton').addEventListener('click', () => {
+  const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+  const downPayment = parseFloat(document.getElementById('downPayment').value) || 0;
+  const loanTerm = parseInt(document.getElementById('loanTerm').value) || 0;
+  const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+  const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
+  const propertyCurrency = document.getElementById('propertyCurrency').value;
+  const downPaymentType = document.getElementById('downPaymentType').value;
+  const loanTermType = document.getElementById('loanTermType').value;
+
+  const loanAmount = propertyPrice - (downPaymentType === 'percent' ? propertyPrice * (downPayment / 100) : downPayment);
+  if (loanAmount <= 0 || loanTerm <= 0 || interestRate <= 0) {
+    return;
+  }
+
+  const termInMonths = loanTerm * (loanTermType === 'months' ? 1 : 12);
+  const monthlyRate = interestRate / 100 / 12;
+  let monthlyPayment = 0;
+
+  if (paymentType === "annuity") {
+    monthlyPayment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -termInMonths));
+  } else {
+    const principalPayment = loanAmount / termInMonths;
+    monthlyPayment = principalPayment + (loanAmount * monthlyRate);
+  }
+
+  updateMonthlyPaymentDisplay(monthlyPayment);
+
+  // Показать блок с анимацией
+  const mobilePaymentBlock = document.getElementById('monthlyPaymentMobile');
+  if (!mobilePaymentBlock.classList.contains('show')) {
+    mobilePaymentBlock.classList.add('show');
+  }
+
+  // Прокрутка к блоку
+  mobilePaymentBlock.scrollIntoView({
+    behavior: 'smooth', // Плавный скролл
+    block: 'center', // Скроллим к центру блока
+  });
+});
+
+// Обновление ежемесячного платежа
+function updateMonthlyPaymentDisplay(payment) {
+  const propertyCurrency = document.getElementById('propertyCurrency').value;
+  const formattedPayment = formatNumberWithSpaces(Math.round(payment).toString());
+
+  document.getElementById('monthlyPaymentDesktopDisplay').textContent = `от ${formattedPayment} ${propertyCurrency === 'usd' ? '$' : '₽'}`;
+  document.getElementById('monthlyPaymentMobileDisplay').textContent = `от ${formattedPayment} ${propertyCurrency === 'usd' ? '$' : '₽'}`;
+}
+
+    
+      // Привязка событий
+      document.getElementById('propertyCurrency').addEventListener('change', syncCurrency);
+      document.getElementById('propertyPrice').addEventListener('input', updateLoanAmount);
+      document.getElementById('downPayment').addEventListener('input', updateLoanAmount);
+      document.getElementById('downPaymentType').addEventListener('change', updateLoanAmount);
+    </script>
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <script
+            src="https://unpkg.com/react@18/umd/react.development.js"
+            crossorigin
+        ></script>
+        <script
+            src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+            crossorigin
+        ></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/clsx@2.1.1/dist/clsx.min.js"></script>
+    </head>
+
+    <script type="text/babel" data-type="module">
+        const container = document.getElementById("root");
+        const root = ReactDOM.createRoot(container);
+        const searchParams = new URLSearchParams(window.location.search);
+        const city = searchParams.get("city");
+
+        function useDebounce(value, delay) {
+            const [debouncedValue, setDebouncedValue] = React.useState(value);
+
+            React.useEffect(() => {
+                const timer = setTimeout(() => {
+                    setDebouncedValue(value);
+                }, delay);
+
+                return () => {
+                    clearTimeout(timer);
+                };
+            }, [value, delay]);
+
+            return debouncedValue;
+        }
+
+        function FilterBackground() {
+            return (
+                <div
+                    className="absolute inset-0 h-full w-full brightness-50 bg-no-repeat bg-cover bg-center z-[-10]"
+                    style={{ backgroundImage: "url('https://storage.yandexcloud.net/a1-broker/city-background-1.jpg')" }}
+                ></div>
+            );
+        }
+
+        function ChosenFilter({ label, handleClear }) {
+            return (
+                <div className="bg-black bg-opacity-60 py-[11px] px-[20px] text-white rounded-full flex items-center gap-2">
+                    {label}
+
+                    <button onClick={handleClear}>
+                        <img src="https://storage.yandexcloud.net/a1-broker/cross.svg" />
+                    </button>
+                </div>
+            );
+        }
+
+        function MoreFilters({ globalFilters, setGlobalFilters, city }) {
+            const [areaFrom, setAreaFrom] = React.useState();
+            const [areaTo, setAreaTo] = React.useState();
+            const [tillMetro, setTillMetro] = React.useState();
+            const [buildingClass, setBuildingClass] = React.useState();
+            const [type, setType] = React.useState();
+            const [facade, setFacade] = React.useState();
+            const [decoration, setDecoration] = React.useState();
+            const [elevator, setElevator] = React.useState();
+            const [parking, setParking] = React.useState();
+            const [date, setDate] = React.useState();
+            
+            const filtersSelectValues = {
+                decoration: ['Без стен', 'Без отделки', 'Подчистовая', 'Чистовая', 'С ремонтом', 'С мебелью'],
+                elevator: ['Пассажирский', 'Грузовой', 'Пассажирский и грузовой'],
+                parking: ['Отдельный многоуровневый паркинг', 'Подземный паркинг', 'Стоянка на территории дома'],
+                buildingClass: ['Стандарт', 'Комфорт', 'Бизнес', 'Элитный'],
+                type: ['0', '1', '2', '3M'],
+                facade: ['Монолитный', 'Панельный', 'Кирпичный', 'Кирпично-монолитный', 'Газабетон-монолит', 'Каркасный', 'Газабетон', 'Полистиролбетон', 'Брус', 'Сруб'],
+            }
+
+            const resetFilters = () => {
+                setAreaFrom("");
+                setAreaTo("");
+                setTillMetro("");
+                setBuildingClass("");
+                setType("");
+                setFacade("");
+                setDecoration("");
+                setElevator("");
+                setParking("");
+                setDate("");
+            };
+            
+            const changeFilters = () => {
+                console.log(globalFilters)
+                setGlobalFilters(
+                    {
+                        ...globalFilters,
+                        decoration: decoration,
+                        elevator: elevator,
+                        parking: parking,
+                        property_class: buildingClass,
+                        room_type: type,
+                        wall_type: facade,
+                    }
+                )
+            }
+
+            return (
+                <div className="absolute top-20 right-0 bg-white rounded-lg w-[60%] px-8 py-6 grid grid-cols-4 grid-rows-3 gap-10 text-sm">
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">Площадь, м2</label>
+                        <div className="flex w-full rounded-md text-sm !border !border-solid !border-[#e5e7eb]">
+                            <input
+                                type="text"
+                                className="outline-none w-full rounded-l-md py-2 px-3 border-r"
+                                placeholder="от"
+                            />
+
+                            <input
+                                type="text"
+                                className="outline-none w-full rounded-r-md py-2 px-3"
+                                placeholder="до"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">До метро</label>
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                onChange={(e) => setTillMetro(e.target.value)}
+                                className="py-2 w-full bg-transparent outline-none"
+                            >
+                                <option value="">Выбрать</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">Класс недвижимости</label>
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                value={buildingClass}
+                                onChange={(e) =>
+                                    setBuildingClass(e.target.value)
+                                }
+                                className="py-2  w-full bg-transparent outline-none"
+                            >
+                                {
+                                    filtersSelectValues.buildingClass.map((item) => {
+                                        return (
+                                            <option value={item}>{item}</option>
+                                            )
+                                    })
+                                }
+                                <option value="">Выбрать</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">Тип дома</label>
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                value={type}
+                                onChange={(e) => setType(e.target.value)}
+                                className="py-2 w-full bg-transparent outline-none"
+                            >
+                                {
+                                    filtersSelectValues.type.map((item) => {
+                                        return (
+                                            <option value={item}>{item}</option>
+                                            )
+                                    })
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">Фасад дома</label>
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                onChange={(e) => setFacade(e.target.value)}
+                                className="py-2 w-full bg-transparent outline-none"
+                            >
+                                {
+                                    filtersSelectValues.facade.map((item) => {
+                                        return (
+                                            <option value={item}>{item}</option>
+                                            )
+                                    })
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">Отделка</label>
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                value={decoration}
+                                onChange={(e) => setDecoration(e.target.value)}
+                                className="py-2 w-full bg-transparent outline-none"
+                            >
+                                {
+                                    filtersSelectValues.decoration.map((item) => {
+                                        return (
+                                            <option value={item}>{item}</option>
+                                            )
+                                    })
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">Лифт</label>
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                value={elevator}
+                                onChange={(e) => setElevator(e.target.value)}
+                                className="py-2 w-full bg-transparent outline-none"
+                            >
+                                {
+                                    filtersSelectValues.elevator.map((item) => {
+                                        return (
+                                            <option value={item}>{item}</option>
+                                            )
+                                    })
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm">Паркинг</label>
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                value={parking}
+                                onChange={(e) => setParking(e.target.value)}
+                                className="py-2 w-full bg-transparent outline-none"
+                            >
+                                {
+                                    filtersSelectValues.parking.map((item) => {
+                                        return (
+                                            <option value={item}>{item}</option>
+                                            )
+                                    })
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <div className="flex w-full bg-white !border !border-solid !border-[#e5e7eb] rounded-md px-3 text-black text-opacity-40">
+                            <select
+                                onChange={(e) =>
+                                    setDeliveryDate(e.target.value)
+                                }
+                                className="py-2 w-full bg-transparent outline-none"
+                            >
+                                <option value="">Выбрать</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="col-span-3 flex gap-4 justify-end items-end">
+                        <button
+                            onClick={resetFilters}
+                            className="rounded border border-black px-10 py-2 h-fit flex gap-3 items-center"
+                        >
+                            <span className="text-sm text-opacity-60">
+                                Сбросить фильтр
+                            </span>
+                        </button>
+
+                        <button className="rounded border border-black bg-black px-10 py-2 h-fit" onClick={changeFilters}>
+                            <span className="text-sm text-white">
+                                Показать 57 предложений
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        function ItemCard({ item }) {
+            return (
+                <a
+                    href={`https://a1-brokers.com/complex?city=${city}&id=${item.id}`}
+                    className="h-fit md:h-[340px] w-full bg-white rounded-lg flex flex-col md:flex-row gap-6 md:gap-14 px-[20px] py-[20px] hover:shadow-xl"
+                >
+                    <img
+                        src={item.logo_image}
+                        alt="item"
+                        loading="lazy"
+                        className="rounded-lg h-[300px] w-full md:w-[300px] object-cover"
+                    />
+                    <div className="flex h-full flex-col gap-3 flex-1">
+                        <h3 className="text-3xl text-black leading-[60px] tracking-[-2px]">
+                            {item.name}
+                        </h3>
+
+                        <p className="text-black">{item.address}</p>
+
+                        {item.subways && item.subways.map((subway, index) => {
+                            if (index < 2) {
+                              return (
+                                <div key={subway.name} className="flex items-center gap-3">
+                                    <div className="h-[10px] w-[10px] rounded-full" style={{backgroundColor: subway.color_hex}}></div>
+                                    <p className="text-black text-opacity-40">
+                                        {subway.name}, {subway.distance_text}
+                                    </p>
+                                </div>
+                              )
+                            }
+                        })}
+
+                        <p className="mt-4 text-black">{item.sale_start}</p>
+
+                        <p className="mt-2 text-black">{item.key_delivery_deadline}</p>
+
+                        <p className="mt-2 text-black text-opacity-40">
+                            Квартир: {item.apartments_count}
+                        </p>
+                    </div>
+
+                    <div className="hidden md:flex flex-col justify-between h-full py-[10px]">
+                        <div className="flex w-[270px] flex-col gap-2 text-sm">
+                            {Object.entries(item.apartments_type).map(
+                                ([key, value]) => (
+                                    <div key={key}>
+                                        <div
+                                            key={key}
+                                            className="flex justify-between"
+                                        >
+                                            <h6 className="text-black text-opacity-40">
+                                                {key}
+                                            </h6>
+                                            <p className="text-black">
+                                                от{" "}
+                                                {value.toLocaleString("ru", {
+                                                    style: "currency",
+                                                    currency: "RUB",
+                                                })}{" "}
+                                            </p>
+                                        </div>
+                                        <hr />
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    </div>
+                </a>
+            );
+        }
+
+        function ItemsPagination({ totalPages, currentPage, setPage }) {
+            const handlePageChange = (page) => {
+                setPage(page);
+            };
+
+            return (
+                <div className="w-full flex justify-between">
+                    <div className="flex gap-6">
+                        <button
+                            onClick={() => setPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="bg-black bg-opacity-[0.08] text-sm rounded px-[20px] py-[10px] tracking-[-1px] w-fit self-end text-black disabled:text-opacity-40"
+                        >
+                            Предыдущая
+                        </button>
+
+                        <div className="flex gap-1">
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => handlePageChange(i + 1)}
+                                    className={clsx(
+                                        "bg-black text-sm rounded px-[20px] py-[10px] tracking-[-1px] w-fit self-end disabled:text-opacity-40",
+                                        currentPage === i + 1
+                                            ? "text-white"
+                                            : "bg-opacity-[0.08]"
+                                    )}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() => setPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="bg-black bg-opacity-[0.08] text-sm rounded px-[20px] py-[10px] tracking-[-1px] w-fit self-end text-black disabled:text-opacity-40"
+                        >
+                            Следующая
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        function ItemsContainer({ filters }) {
+            const [items, setItems] = React.useState([]);
+            const [totalPages, setTotalPages] = React.useState();
+            const [totalItems, setTotalItems] = React.useState();
+            const [page, setPage] = React.useState(1);
+            const [isLoading, setIsLoading] = React.useState(false);
+            const [isFetching, setIsFetching] = React.useState(false); // New state to prevent multiple fetches
+
+            const [isTouched, setIsTouched] = React.useState(
+                Boolean(
+                    filters.search ||
+                        filters.roomType.length ||
+                        filters.priceFrom ||
+                        filters.priceTo
+                )
+            );
+
+            const searchParams = new URLSearchParams({
+                page: page,
+            });
+
+            if (filters.search) {
+                searchParams.append("query", filters.search);
+            }
+
+            if (filters.roomType) {
+                filters.roomType.forEach((roomType) => {
+                    searchParams.append("room_type", roomType);
+                });
+            }
+
+            if (filters.priceFrom) {
+                searchParams.append("min_price", filters.priceFrom);
+            }
+
+            if (filters.priceTo) {
+                searchParams.append("max_price", filters.priceTo);
+            }
+            
+            React.useEffect(() => {
+                setIsTouched(
+                    Boolean(
+                        filters.search ||
+                            filters.roomType.length ||
+                            filters.priceFrom ||
+                            filters.priceTo
+                    )
+                );
+            }, [filters]);
+
+            React.useEffect(() => {
+                if (isFetching) return; // Prevent multiple fetches
+                setIsFetching(true);
+                setIsLoading(true);
+                fetch(`https://a1-brokers.ru/api/complex/filter/?city=${city}&` + searchParams)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        setItems(data.results);
+                        setTotalPages(data.pagination.total_pages);
+                        setTotalItems(data.pagination.total_records);
+                    })
+                    .catch((error) => {
+                        console.error('Fetch error:', error);
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                        setIsFetching(false);
+                    });
+            }, [filters, page]);
+
+            return (
+                <div id="items" className="relative bg-[#f6f6f6] px-[5vw] pt-10 pb-32 flex flex-col gap-6 scroll-mt-20">
+                
+                    {isTouched &&
+                        (isLoading ? (
+                            <div className="absolute top-[-75px] left-1/2 -translate-x-1/2">
+                                <div className="w-fit px-[20px] py-[11px] bg-black bg-opacity-60 rounded-full text-white animate-bounce">
+                                    Загрузка...
+                                </div>
+                            </div>
+                        ) : (
+                            items &&
+                            (items.length > 0 ? (
+                                <a
+                                    href="#items"
+                                    className="absolute top-[-75px] left-1/2 -translate-x-1/2"
+                                >
+                                    <span className="animate-bounce px-[20px] py-[11px] bg-black bg-opacity-60 rounded-full text-white flex items-center gap-2">
+                                        Посмотреть {totalItems} вариантов
+                                        <img src="https://storage.yandexcloud.net/a1-broker/arrow_down.svg" />
+                                    </span>
+                                </a>
+                            ) : (
+                                <div className="absolute top-[-75px] left-1/2 -translate-x-1/2">
+                                    <div className="px-[20px] py-[11px] bg-black bg-opacity-60 rounded-full text-white animate-bounce">
+                                        Нет вариантов
+                                    </div>
+                                </div>
+                            ))
+                        ))}
+                
+                    {items &&
+                        items.map((item, index) => (
+                            <ItemCard key={index} item={item} />
+                        ))}
+
+                    {totalPages && (
+                        <ItemsPagination
+                            totalPages={totalPages}
+                            currentPage={page}
+                            setPage={setPage}
+                        />
+                    )}
+                </div>
+            );
+        }
+
+        function Filters({ globalFilters, setGlobalFilters, cityName }) {
+            const [category, setCategory] = React.useState("new");
+            const [search, setSearch] = React.useState("");
+            const [roomType, setRoomType] = React.useState([]);
+            const [priceFrom, setPriceFrom] = React.useState("");
+            const [priceTo, setPriceTo] = React.useState("");
+            const [showAllFilters, setShowAllFilters] = React.useState(false);
+
+            const [searchResults, setSearchResults] = React.useState([]);
+            const [justSelected, setJustSelected] = React.useState(false);
+
+            const debouncedSearch = useDebounce(search.trim(), 700);
+
+            React.useEffect(() => {
+                if (debouncedSearch.length > 0 && !justSelected) {
+                    fetch(
+                        `https://a1-brokers.ru/api/complex/filter/suggestion/?city=${city}&query=${debouncedSearch}`
+                    )
+                        .then((response) => response.json())
+                        .then((data) => {
+                            setSearchResults(data);
+                        });
+                } else {
+                    setSearchResults([]);
+                }
+
+                setJustSelected(false);
+            }, [debouncedSearch]);
+            
+            const resetFilters = () => {
+                setCategory("new");
+                setSearch("");
+                setRoomType([]);
+                setPriceFrom("");
+                setPriceTo("");
+                setShowAllFilters(false);
+                setSearchResults([]);
+
+                setGlobalFilters({
+                    category: "new",
+                    search: "",
+                    roomType: [],
+                    priceFrom: "",
+                    priceTo: "",
+                });
+            };
+
+            return (
+                <div className="flex flex-col gap-8 pt-[15vh] md:pt-[25vh]">
+                    <a
+                        href="https://a1-brokers.com"
+                        className="flex w-fit items-center gap-2 text-lg !text-white !text-opacity-40"
+                    >
+                        <img src="https://storage.yandexcloud.net/a1-broker/arrow-left-gray.svg" />
+                        на главную
+                    </a>
+
+                    <h1 className="text-white text-4xl md:text-[4rem]">
+                        {cityName}
+                    </h1>
+
+
+                    <div className="flex">
+                        <button
+                            onClick={() => setCategory("new")}
+                            className={clsx(
+                                "border-white text-sm md:text-xl px-4 py-3 text-white",
+                                category === "new"
+                                    ? "border-b-4 border-opacity-100 text-opacity-100"
+                                    : "border-b border-opacity-60 text-opacity-60"
+                            )}
+                        >
+                            Новостройки
+                        </button>
+                    </div>
+
+                    <div className="relative w-full flex flex-col gap-4 md:gap-0 md:flex-row justify-between bg-black bg-opacity-60 h-fit md:h-20 rounded-lg backdrop-blur-sm p-2">
+                        <div className="flex w-full md:w-1/4 items-center h-full rounded-md bg-white gap-4 px-4 py-4 md:py-0">
+                            <img
+                                src="https://storage.yandexcloud.net/a1-broker/magnifying_glass.png"
+                                alt="search icon"
+                            />
+
+                            <input
+                                type="text"
+                                className="outline-none h-full w-full"
+                                placeholder="Метро, район, локация, ЖК"
+                                value={search}
+                                onChange={(e) => {
+                                    setSearch(e.target.value);
+                                    setSearchResults([]);
+                                    setJustSelected(false);
+                                }}
+                            />
+                            
+                            {searchResults?.length > 0 && (
+                                <div className="absolute top-20 left-2 flex w-full md:w-[calc(25vw_-_3.5rem)] h-fit rounded-md flex-col bg-white">
+                                    {searchResults.map((item, index) => {
+                                        if (index < 5) {
+                                            return (
+                                                <div
+                                                    key={item}
+                                                    onClick={() => {
+                                                        setSearch(item);
+                                                        setSearchResults([]);
+                                                        setJustSelected(true);
+                                                    }}
+                                                    className={
+                                                        "pl-14 py-4 text-black cursor-pointer hover:bg-black hover:bg-opacity-20"
+                                                    }
+                                                >
+                                                    <p>{item}</p>
+                                                </div>
+                                            );
+                                        }
+                                    })}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col justify-between">
+                            <span className="text-sm hidden md:block text-white text-opacity-60">
+                                Комнатность
+                            </span>
+                            <div className="flex bg-white bg-opacity-[16%] text-white rounded-md text-sm divide-x divide-white divide-opacity-30">
+                                <button
+                                    onClick={() => {
+                                        setRoomType((prev) => {
+                                            if (prev.includes("0")) {
+                                                return prev.filter(
+                                                    (item) => item !== "0"
+                                                );
+                                            }
+                                            return [...prev, "0"];
+                                        });
+                                    }}
+                                    className={clsx(
+                                        "py-2 px-4 w-full md:w-fit rounded-l-md",
+                                        roomType.includes("0") &&
+                                            "bg-white text-black"
+                                    )}
+                                >
+                                    Студия
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setRoomType((prev) => {
+                                            if (prev.includes("1")) {
+                                                return prev.filter(
+                                                    (item) => item !== "1"
+                                                );
+                                            }
+                                            return [...prev, "1"];
+                                        });
+                                    }}
+                                    className={clsx(
+                                        "py-2 px-4 w-full md:w-fit",
+                                        roomType.includes("1") &&
+                                            "bg-white text-black"
+                                    )}
+                                >
+                                    1
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setRoomType((prev) => {
+                                            if (prev.includes("2")) {
+                                                return prev.filter(
+                                                    (item) => item !== "2"
+                                                );
+                                            }
+                                            return [...prev, "2"];
+                                        });
+                                    }}
+                                    className={clsx(
+                                        "py-2 px-4 w-full md:w-fit",
+                                        roomType.includes("2") &&
+                                            "bg-white text-black"
+                                    )}
+                                >
+                                    2
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setRoomType((prev) => {
+                                            if (prev.includes("3M")) {
+                                                return prev.filter(
+                                                    (item) => item !== "3M"
+                                                );
+                                            }
+                                            return [...prev, "3M"];
+                                        });
+                                    }}
+                                    className={clsx(
+                                        "py-2 px-4 w-full md:w-fit rounded-r-md",
+                                        roomType.includes("3M") &&
+                                            "bg-white text-black"
+                                    )}
+                                >
+                                    3+
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col w-full md:w-48 justify-between">
+                            <span className="text-sm hidden md:block text-white text-opacity-60">
+                                Стоимость, ₽
+                            </span>
+                            <div className="flex w-full bg-white rounded-md text-sm divide-x divide-opacity-30">
+                                <input
+                                    type="text"
+                                    className="outline-none w-full rounded-md py-2 px-3"
+                                    placeholder="от"
+                                    value={priceFrom}
+                                    onChange={(e) =>
+                                        setPriceFrom(e.target.value)
+                                    }
+                                />
+
+                                <input
+                                    type="text"
+                                    className="outline-none w-full rounded-md py-2 px-3"
+                                    placeholder="до"
+                                    value={priceTo}
+                                    onChange={(e) => setPriceTo(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="h-full hidden md:block w-[1px] bg-white bg-opacity-[16%]"></div>
+
+                        <button
+                            className="flex gap-4 items-center"
+                            onClick={() => setShowAllFilters((prev) => !prev)}
+                        >
+                            <img
+                                src="https://storage.yandexcloud.net/a1-broker/filter_icon.png"
+                                alt="filter icon"
+                            />
+
+                            <span className="text-white">Все фильтры</span>
+                        </button>
+
+                        <button
+                            onClick={() =>
+                                {
+                                    setGlobalFilters({
+                                        category,
+                                        search,
+                                        roomType,
+                                        priceFrom,
+                                        priceTo,
+                                    })
+                                    setShowAnchor(true)
+                                }
+                            }
+                            className="bg-white rounded-md flex items-center justify-center text-sm px-8 py-4 md:py-0"
+                        >
+                            Показать объекты
+                        </button>
+
+                        {showAllFilters && <MoreFilters globalFilters={globalFilters} setGlobalFilters={setGlobalFilters} city={city} />}
+                    </div>
+
+                    <div className="flex flex-col gap-4">
+                        <div className="flex flex-col md:flex-row gap-2">
+                            {search.length > 0 && (
+                                <ChosenFilter
+                                    label={search}
+                                    handleClear={() => setSearch("")}
+                                />
+                            )}
+                            {roomType.length > 0 && (
+                                <ChosenFilter
+                                    label={`Количество комнат: ${roomType
+                                        .map((item) => {
+                                            if (item === "0") {
+                                                return "Студия";
+                                            } else if (item === "1") {
+                                                return "1";
+                                            } else if (item === "2") {
+                                                return "2";
+                                            } else if (item === "3M") {
+                                                return "3+";
+                                            }
+                                        })
+                                        .join(", ")}`}
+                                    handleClear={() => setRoomType([])}
+                                />
+                            )}
+                            {priceFrom.length > 0 && (
+                                <ChosenFilter
+                                    label={`от ${Number(
+                                        priceFrom
+                                    ).toLocaleString("ru", {
+                                        style: "currency",
+                                        currency: "RUB",
+                                    })} `}
+                                    handleClear={() => setPriceFrom("")}
+                                />
+                            )}
+                            {priceTo.length > 0 && (
+                                <ChosenFilter
+                                    label={`до ${Number(priceTo).toLocaleString(
+                                        "ru",
+                                        {
+                                            style: "currency",
+                                            currency: "RUB",
+                                        }
+                                    )}`}
+                                    handleClear={() => setPriceTo("")}
+                                />
+                            )}
+                        </div>
+
+                        {(search.length > 0 ||
+                            roomType.length > 0 ||
+                            priceFrom.length > 0 ||
+                            priceTo.length > 0) && (
+                            <button
+                                onClick={resetFilters}
+                                className="flex bg-white w-fit rounded-3xl bg-opacity-60 px-[20px] py-[11px] text-sm items-center gap-2"
+                            >
+                                Сбросить фильтры
+                                <img
+                                    src={
+                                        "https://storage.yandexcloud.net/a1-broker/trash.svg"
+                                    }
+                                    alt="trash"
+                                />
+                            </button>
+                        )}
+                    </div>
+                
+
+                    </div>
+            );
+        }
+
+        function App() {
+            const [title, setTitle] = React.useState("");
+
+            React.useEffect(()=> {
+                if (!city) {
+                    window.location.href =
+                        "https://a1-brokers.com/search?city=msc";
+                }
+            }, [city])
+
+            React.useEffect(() => {
+                if (city) {
+                    fetch(
+                        "https://a1-brokers.ru/api/complex/filter/title/?city=" +
+                            city
+                    )
+                        .then((response) => response.json())
+                        .then((data) => {
+                            setTitle(data.title);
+                        });
+                }
+            }, [city]);
+            
+            const [globalFilters, setGlobalFilters] = React.useState({
+                category: "new",
+                search: "",
+                roomType: [],
+                priceFrom: "",
+                priceTo: "",
+            });
+
+            return (
+                <div className="min-h-screen flex flex-col font-['Inter']">
+                    <div className="h-screen relative px-[5vw]">
+                        <FilterBackground />
+
+                        <Filters globalFilters={globalFilters} setGlobalFilters={setGlobalFilters} cityName={title} />
+                    </div>
+
+                    <ItemsContainer filters={globalFilters} />
+
+                </div>
+            );
+        }
+
+        root.render(<App />);
+    </script>
+
+    <body style="font-family: 'Inter', sans-serif">
+        <div id="root"></div>
+    </body>
+</html>
