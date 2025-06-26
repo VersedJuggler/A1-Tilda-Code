@@ -1,0 +1,109 @@
+<style>
+  /* Жирный шрифт для преобразованной цены */
+  .price-millions {
+   /* font-weight: bold; */
+  }
+
+  /* Стили для характеристик в две колонки */
+  .t-store__prod-popup__info.t-align_left.t-store__prod-popup__col-right.t-col.t-col_6
+    p.t-typography__characteristics.js-store-prod-charcs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;        /* при необходимости подправьте размер */
+    line-height: 1.4;
+    border-bottom: 1px solid #000;
+    padding-bottom: 8px;
+  }
+  .t-store__prod-popup__info.t-align_left.t-store__prod-popup__col-right.t-col.t-col_6
+    .char-key {
+    /* можно сделать чуть более «тяжёлый» шрифт, если нужно */
+    font-weight: 500;
+  }
+  .t-store__prod-popup__info.t-align_left.t-store__prod-popup__col-right.t-col.t-col_6
+    .char-value {
+    text-align: right;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    /** 1. Преобразование цены в «от X.X млн.» и жирный шрифт */
+    function transformProductPrices() {
+      document.querySelectorAll('.js-product-price[data-product-price-def-str]').forEach(function(el) {
+        var raw   = el.getAttribute('data-product-price-def-str') || '';
+        var value = parseInt(raw.replace(/\D/g, ''), 10);
+        if (isNaN(value)) return;
+        var formatted = 'от ' + (value / 1e6).toFixed(1) + ' млн.';
+        if (el.textContent.trim() !== formatted) {
+          el.textContent = formatted;
+          el.classList.add('price-millions');
+        }
+      });
+    }
+
+    /** 2. Группировка повторяющихся характеристик и новая вёрстка */
+    function groupCharacteristics() {
+      var container = document.querySelector(
+        '.t-store__prod-popup__info.t-align_left.t-store__prod-popup__col-right.t-col.t-col_6'
+      );
+      if (!container) return;
+
+      var items = Array.from(
+        container.querySelectorAll('p.t-typography__characteristics.js-store-prod-charcs')
+      );
+      if (items.length === 0) return;
+
+      // 2.1 Собираем значения по ключам
+      var map = {}, order = [];
+      items.forEach(function(p) {
+        var txt = p.textContent.trim();
+        var idx = txt.indexOf(':');
+        if (idx < 0) return;
+        var key = txt.slice(0, idx).trim();
+        var val = txt.slice(idx + 1).trim();
+        if (!map[key]) {
+          map[key] = new Set();
+          order.push(key);
+        }
+        map[key].add(val);
+      });
+
+      // 2.2 Если нет дубликатов — ничего не делаем
+      if (items.length <= order.length) return;
+
+      // 2.3 Удаляем старые элементы
+      items.forEach(function(p) { p.remove(); });
+
+      // 2.4 Вставляем новые <p> с двумя <span>
+      order.forEach(function(key) {
+        var vals = Array.from(map[key]);
+        var p = document.createElement('p');
+        p.className = 't-typography__characteristics js-store-prod-charcs';
+
+        var keySpan = document.createElement('span');
+        keySpan.className = 'char-key';
+        keySpan.textContent = key + ':';
+
+        var valSpan = document.createElement('span');
+        valSpan.className = 'char-value';
+        valSpan.textContent = vals.join(', ');
+
+        p.appendChild(keySpan);
+        p.appendChild(valSpan);
+        container.appendChild(p);
+      });
+    }
+
+    // Первый прогон
+    transformProductPrices();
+    groupCharacteristics();
+
+    // Следим за динамическими изменениями
+    var observer = new MutationObserver(function() {
+      transformProductPrices();
+      groupCharacteristics();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+</script>

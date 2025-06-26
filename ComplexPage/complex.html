@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Счастье в Казани</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Скрываем исходный блок со сниппетом, чтобы не мешал */
+    .t-store.t-store__prod-snippet__container {
+      /* display: none !important;*/
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: #f6f6f6;
+      color: #000;
+      line-height: 1.6;
+    }
+    #complex-header {
+      position: relative;
+      height: 425px;
+      /* Фоновое изображение будет задано через JS */
+      background-size: cover;
+      background-position: top center;
+      color: #fff;
+      display: flex;
+      align-items: flex-end;
+    }
+    #complex-header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 0;
+    }
+    .complex-header-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 80px 20px 55px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      height: 100%;
+    }
+    .text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    #back-button {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: normal;
+      color: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+      margin-bottom: 100px;
+      padding: 0;
+      align-self: flex-start;
+    }
+    #complex-header h1 {
+      font-size: 64px;
+      font-weight: 400;
+      line-height: 60px;
+      margin-bottom: 24px;
+    }
+    #complex-header p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .price-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+    .price-info {
+      display: flex;
+      gap: 60px;
+      align-items: flex-start;
+    }
+    .price-info div {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      font-size: 16px;
+      text-align: left;
+    }
+    .price-number, .area-number {
+      font-size: 40px;
+      font-weight: 400;
+      line-height: 1;
+      margin: 0;
+    }
+    #consultation-button {
+      width: 559px;
+      height: 63px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 13.44px;
+      cursor: pointer;
+      margin-top: 50px;
+    }
+    .section {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .section img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+    .card-list {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .card {
+      flex: 1 1 200px;
+      background: #f7f7f7;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .form-section {
+      background: #7ba6cc;
+      background-image: url('https://drive.google.com/uc?export=view&id=1V7u2s599H-7hDZAq5y67NqnmIany3z6d');
+      background-size: cover;
+      background-position: right center;
+      min-height: 720px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .form-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(122, 164, 204, 0.85);
+      z-index: 0;
+    }
+    .form-section .form-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      width: 100%;
+      margin-left: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .form-section .form-caption {
+      font-size: 16px;
+      color: #e6f0fa;
+      margin-bottom: 32px;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+    .form-section h2 {
+      font-size: 56px;
+      font-weight: 400;
+      line-height: 110%;
+      color: #fff;
+      margin-bottom: 24px;
+      margin-top: 0;
+      letter-spacing: -0.04em;
+    }
+    .complex-form-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px 32px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .complex-form-fields label {
+      font-size: 16px;
+      color: #fff;
+      margin-bottom: 8px;
+      font-weight: 400;
+      display: block;
+    }
+    .complex-form-fields select,
+    .complex-form-fields input {
+      width: 100%;
+      padding: 16px 18px;
+      font-size: 18px;
+      border-radius: 8px;
+      border: none;
+      background: #fff;
+      color: #222;
+      margin-bottom: 0;
+      box-sizing: border-box;
+      outline: none;
+      transition: box-shadow 0.2s;
+    }
+    .complex-form-fields select:focus,
+    .complex-form-fields input:focus {
+      box-shadow: 0 0 0 2px #2222cc33;
+    }
+    .complex-form-fields .fullwidth {
+      grid-column: 1 / span 2;
+    }
+    .complex-form-submit {
+      width: 100%;
+      margin-top: 12px;
+      margin-bottom: 18px;
+    }
+    .complex-form-submit button {
+      width: 260px;
+      height: 56px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .complex-form-submit button:hover {
+      background: #222;
+    }
+    .complex-form-note {
+      font-size: 13px;
+      color: #c9d6e5;
+      margin-top: 8px;
+      max-width: 90%;
+      line-height: 1.3;
+    }
+    @media (max-width: 900px) {
+      .form-section {
+        min-height: 600px;
+        padding: 30px 0;
+      }
+      .form-section .form-inner {
+        margin-left: 20px;
+        max-width: 100%;
+      }
+      .form-section h2 {
+        font-size: 36px;
+      }
+      .complex-form-fields {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .complex-form-fields .fullwidth {
+        grid-column: 1;
+      }
+      .complex-form-submit button {
+        width: 100%;
+      }
+    }
+    /* Стили для блока complex-about */
+    #complex-about h2 {
+      font-size: 48px;
+      font-weight: 400;
+      margin-bottom: 40px;
+    }
+    /* Стили для описания ЖК */
+    #complex-about-text {
+      font-size: 16px;
+      line-height: 120%;
+      letter-spacing: -0.04em;
+      color: rgba(0, 0, 0, 0.5);
+    }
+    /* Отступ перед характеристиками */
+    #complex-charcs-placeholder {
+      margin-top: 60px;
+    }
+    /* Стили для характеристик в две колонки */
+    #complex-charcs-placeholder p.t-typography__characteristics.js-store-prod-charcs {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      border-bottom: 1px solid #000;
+      padding-bottom: 8px;
+    }
+    #complex-charcs-placeholder .char-key {
+      font-weight: 500;
+    }
+    #complex-charcs-placeholder .char-value {
+      text-align: right;
+    }
+    #complex-comfort h2 {
+      font-size: 48px;
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      margin-bottom: 50px;
+      line-height: 100%;
+    }
+    #complex-comfort .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    #complex-comfort .card {
+      width: 616px;
+      min-width: 616px;
+      max-width: 616px;
+      height: 108px;
+      min-height: 108px;
+      max-height: 108px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      padding: 22px 24px 18px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-sizing: border-box;
+    }
+    #complex-comfort .card-desc {
+      font-size: 14px;
+      font-weight: 400;
+      color: #888;
+      margin-top: 4px;
+    }
+    #complex-comfort.grid-2 {
+      align-items: center;
+    }
+    #complex-comfort-gallery-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 15px;
+      width: 100%;
+      max-width: 100%;
+      transform: scale(0.9);
+    }
+    /* Радиус для элементов галереи */
+    .t-slds__imgwrapper.t-zoomable,
+    .t-slds__bgimg.t-bgimg.loaded,
+    .t-slds__thumbsbullet,
+    .t-slds__bullet {
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+    .complex-header-inner,
+    .section {
+      max-width: 1250px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #complex-invest h2 {
+      font-size: 48px;
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      line-height: 100%;
+      margin-bottom: 50px;
+      max-width: 658px;
+    }
+    #complex-invest .card-list {
+      display: flex;
+      gap: 32px;
+      margin-top: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    #complex-invest .card {
+      width: 270px;
+      min-width: 270px;
+      max-width: 270px;
+      height: 270px;
+      min-height: 270px;
+      max-height: 270px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px 24px 24px 24px;
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      line-height: 100%;
+      color: #222;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      box-sizing: border-box;
+      position: relative;
+      gap: 0;
+    }
+    #complex-header-price-placeholder .js-product-price {
+      font-size: 40px;
+      font-weight: 400;
+      line-height: 1;
+      text-align: left;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<div id="complex-page">
+ <div id="complex-header">
+    <div class="complex-header-inner">
+      <div class="text">
+        <button id="back-button" onclick="history.back()">← на главную</button>
+        <h1>Счастье в Казани</h1>
+        <p>Сочетание урбанистической жизни и природной красоты</p>
+      </div>
+      <div class="price-box">
+        <div class="price-info">
+          <div>
+            <span>Стоимость</span>
+            <span id="complex-header-price-placeholder"></span>
+          </div>
+          <div>
+            <span>Площадь</span>
+            <span class="area-number">26.0 – 63.1 м²</span>
+          </div>
+        </div>
+        <button id="consultation-button">Получить консультацию</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section grid-2" id="complex-about">
+    <img src="building.jpg" alt="Жилой комплекс">
+    <div>
+      <h2>О комплексе</h2>
+      <p id="complex-about-text"></p>
+      <div id="complex-charcs-placeholder"></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="section grid-2" id="complex-comfort">
+    <div>
+      <h2>Комфортные условия жилого комплекса</h2>
+      <div class="card-list">
+        <div class="card">Природный оазис<br><span class="card-desc">Собственный парк и река внутри города</span></div>
+        <div class="card">Доступность<br><span class="card-desc">Собственный парк и река внутри города</span></div>
+        <div class="card">Природный оазис<br><span class="card-desc">Собственный парк и река внутри города</span></div>
+        <div class="card">Доступность<br><span class="card-desc">Собственный парк и река внутри города</span></div>
+      </div>
+    </div>
+    <div id="complex-comfort-gallery-placeholder"></div>
+  </div>
+
+  <div class="section" id="complex-invest">
+    <h2>Условия сделки и инвестиционный потенциал</h2>
+    <div class="card-list">
+      <div class="card">30% прирост с момента старта</div>
+      <div class="card">Покупка в ипотеку</div>
+      <div class="card">Рассрочка от застройщика</div>
+      <div class="card">Безопасная сделка по 03-ФЗ</div>
+    </div>
+  </div>
+
+  <div class="form-section" id="complex-form">
+    <div class="form-inner">
+      <div class="form-caption">Свяжитесь с нами</div>
+      <h2>Оставьте заявку<br>на подбор квартиры</h2>
+      <div class="form-caption" style="font-size:20px; color:#fff; margin-bottom:32px; margin-top:-12px;">
+        Получите лучшие доступные предложения с актуальными ценами, акциями и условиями покупки
+      </div>
+      <form>
+        <div class="complex-form-fields">
+          <div>
+            <label>Бюджет</label>
+            <select>
+              <option>до 12 млн.</option>
+              <option>12–20 млн.</option>
+              <option>20–30 млн.</option>
+              <option>30+ млн.</option>
+            </select>
+          </div>
+          <div>
+            <label>Планировка</label>
+            <select>
+              <option>Студия</option>
+              <option>1-комн.</option>
+              <option>2-комн.</option>
+              <option>3-комн.</option>
+              <option>4+ комн.</option>
+            </select>
+          </div>
+          <div class="fullwidth">
+            <input type="text" name="name" placeholder="Имя">
+          </div>
+          <div class="fullwidth">
+            <input type="tel" name="phone" placeholder="Телефон">
+          </div>
+        </div>
+        <div class="complex-form-submit">
+          <button type="submit">Оставить заявку</button>
+        </div>
+        <div class="complex-form-note">
+          Нажимая на кнопку «Оставить заявку» вы соглашаетесь на обработку персональных данных в соответствии с условиями политики конфиденциальности
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+  <script>
+    // Скрытие элементов для complex-moscow
+    if (window.location.href === "https://a1-brokers.com/complex-moscow") {
+      const elementsToHide = [
+        document.getElementById("complex-header"),
+        document.getElementById("complex-about"),
+        document.getElementById("complex-comfort"),
+        document.getElementById("complex-invest"),
+        document.getElementById("complex-form")
+      ];
+      elementsToHide.forEach(el => {
+        if (el) el.style.display = "none";
+      });
+    }
+
+    // Функция установки фонового изображения (ищет любой t-slds__bgimg.t-bgimg.js-product-img)
+    function setHeaderBackgroundFromAnyImg() {
+      // 1. Пробуем найти любой div с data-original (даже если не loaded)
+      let bgDiv = document.querySelector("div.t-slds__bgimg.t-bgimg.js-product-img[data-original]");
+      if (!bgDiv) {
+        // 2. Если не найден, ищем loaded
+        bgDiv = document.querySelector("div.t-slds__bgimg.t-bgimg.loaded[data-original]");
+      }
+      if (bgDiv) {
+        const imageUrl = bgDiv.dataset.original || bgDiv.style.backgroundImage.replace(/url\(["']?|["']?\)/g, '');
+        if (imageUrl) {
+          document.getElementById('complex-header').style.backgroundImage = `url('${imageUrl}')`;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      /** 1. Преобразование цены в «от X.X млн.» и класс price-millions */
+      function transformProductPrices() {
+        document.querySelectorAll('.js-product-price[data-product-price-def-str]').forEach(function(el) {
+          var raw = el.getAttribute('data-product-price-def-str') || '';
+          var value = parseInt(raw.replace(/\D/g, ''), 10);
+          if (isNaN(value)) return;
+          var formatted = 'от ' + (value / 1e6).toFixed(1) + ' млн';
+          if (el.textContent.trim() !== formatted) {
+            el.textContent = formatted;
+            el.classList.add('price-millions');
+          }
+        });
+      }
+      // Трансформируем цену перед подстановкой
+      transformProductPrices();
+      // Подстановка описания ЖК
+      const sourceDesc = document.querySelector("div.js-store-prod-all-text");
+      const targetDesc = document.querySelector("#complex-about-text");
+      if (sourceDesc && targetDesc) {
+        targetDesc.innerHTML = sourceDesc.innerHTML;
+      }
+      // Перемещение блока характеристик под описанием
+      function moveCharcsWithRetry(retries = 20) {
+        const allCharcs = Array.from(document.querySelectorAll("div.js-store-prod-all-charcs"));
+        const targetCharcs = document.querySelector("#complex-charcs-placeholder");
+        if (allCharcs.length > 0 && targetCharcs) {
+          // Найти тот, который НЕ внутри placeholder
+          const sourceCharcs = allCharcs.find(el => !targetCharcs.contains(el));
+          if (sourceCharcs) {
+            targetCharcs.innerHTML = '';
+            targetCharcs.appendChild(sourceCharcs);
+            groupCharacteristics();
+            return;
+          }
+        }
+        if (retries > 0) {
+          setTimeout(() => moveCharcsWithRetry(retries - 1), 500);
+        }
+      }
+      setTimeout(moveCharcsWithRetry, 500);
+
+      // Группировка повторяющихся характеристик и новая вёрстка
+      function groupCharacteristics() {
+        var container = document.querySelector('#complex-charcs-placeholder');
+        if (!container) return;
+        var items = Array.from(
+          container.querySelectorAll('p.t-typography__characteristics.js-store-prod-charcs')
+        );
+        if (items.length === 0) return;
+        var map = {}, order = [];
+        items.forEach(function(p) {
+          var txt = p.textContent.trim();
+          var idx = txt.indexOf(':');
+          if (idx < 0) return;
+          var key = txt.slice(0, idx).trim();
+          var val = txt.slice(idx + 1).trim();
+          if (!map[key]) {
+            map[key] = new Set();
+            order.push(key);
+          }
+          map[key].add(val);
+        });
+        if (items.length <= order.length) return;
+        items.forEach(function(p) { p.remove(); });
+        order.forEach(function(key) {
+          var vals = Array.from(map[key]);
+          var p = document.createElement('p');
+          p.className = 't-typography__characteristics js-store-prod-charcs';
+          var keySpan = document.createElement('span');
+          keySpan.className = 'char-key';
+          keySpan.textContent = key + ':';
+          var valSpan = document.createElement('span');
+          valSpan.className = 'char-value';
+          valSpan.textContent = vals.join(', ');
+          p.appendChild(keySpan);
+          p.appendChild(valSpan);
+          container.appendChild(p);
+        });
+      }
+
+      // Следим за динамическими изменениями характеристик
+      var charcsObserver = new MutationObserver(function() {
+        groupCharacteristics();
+      });
+      charcsObserver.observe(document.getElementById('complex-charcs-placeholder'), { childList: true, subtree: true });
+
+      // Подстановка названия ЖК
+      const sourceTitle = document.querySelector("h1.js-store-prod-name.js-product-name.t-store__prod-popup__name.t-name.t-name_xl");
+      const targetTitle = document.querySelector("#complex-header .complex-header-inner .text h1");
+      if (sourceTitle && targetTitle) {
+        targetTitle.textContent = sourceTitle.textContent;
+      }
+      // Подстановка главного изображения комплекса
+      const sourceImgDiv = document.querySelector('div.t-slds__bgimg.t-bgimg.js-product-img.loaded');
+      const targetImg = document.querySelector('#complex-about img');
+      if (sourceImgDiv && targetImg) {
+        const imgUrl = sourceImgDiv.dataset.original ||
+          sourceImgDiv.style.backgroundImage.replace(/url\(["']?|["']?\)/g, '');
+        targetImg.src = imgUrl;
+      }
+      // Подстановка цены с вычислением из data-атрибута из data-атрибута
+      const sourceEl = document.querySelector('.js-product-price.js-store-prod-price-val');
+      const targetPrice = document.querySelector('.price-number');
+      if (sourceEl && targetPrice) {
+        const raw = sourceEl.getAttribute('data-product-price-def-str') || '';
+        const num = parseInt(raw.replace(/\D/g, ''), 10);
+        if (!isNaN(num)) {
+          const mln = num / 1000000;
+          const display = (mln % 1 === 0) ? mln.toString() : mln.toFixed(1);
+            targetPrice.textContent = 'от ' + display + ' млн';
+            targetPrice.classList.add('price-millions');
+          }
+        }
+
+      // Перемещение галереи в блок complex-comfort
+      function moveGalleryWithRetry(retries = 20) {
+        const gallery = document.querySelector("div.t-store__prod-popup__slider.js-store-prod-slider.t-store__prod-popup__col-left.t-col.t-col_6");
+        const target = document.getElementById("complex-comfort-gallery-placeholder");
+        if (gallery && target && !target.contains(gallery)) {
+          target.innerHTML = '';
+          target.appendChild(gallery);
+          // Триггерим событие для повторной инициализации слайдера
+          var event = document.createEvent('Event');
+          event.initEvent('tilda:resizedone', true, true);
+          window.dispatchEvent(event);
+          return;
+        }
+        if (retries > 0) {
+          setTimeout(() => moveGalleryWithRetry(retries - 1), 500);
+        }
+      }
+      setTimeout(moveGalleryWithRetry, 500);
+
+      // Применяем фон сразу, если возможно, иначе запускаем setInterval
+      if (!setHeaderBackgroundFromAnyImg()) {
+        let applied = false;
+        const interval = setInterval(() => {
+          if (setHeaderBackgroundFromAnyImg()) {
+            applied = true;
+            clearInterval(interval);
+          }
+        }, 300);
+        setTimeout(() => { if (!applied) clearInterval(interval); }, 30000);
+      }
+
+      // === Перемещение и преобразование цены в complex-header по референсу ===
+      function moveAndTransformPriceWithRetry(retries = 20) {
+        var pricePlaceholder = document.getElementById('complex-header-price-placeholder');
+        if (!pricePlaceholder) return;
+        var priceEl = document.querySelector('.js-product-price[data-product-price-def-str]:not([data-moved])');
+        if (priceEl) {
+          priceEl.setAttribute('data-moved', 'true');
+          pricePlaceholder.innerHTML = '';
+          pricePlaceholder.appendChild(priceEl);
+        }
+        transformHeaderPrice();
+        if (!priceEl && retries > 0) {
+          setTimeout(() => moveAndTransformPriceWithRetry(retries - 1), 500);
+        }
+      }
+      function transformHeaderPrice() {
+        var priceEl = document.querySelector('#complex-header-price-placeholder .js-product-price[data-product-price-def-str]');
+        if (!priceEl) return;
+        if (!priceEl.hasAttribute('data-price-processed')) {
+          var priceStr = priceEl.getAttribute('data-product-price-def-str');
+          var price = parseInt(priceStr, 10);
+          if (!isNaN(price)) {
+            var millions = (price / 1000000).toFixed(1);
+            priceEl.textContent = 'от ' + millions + ' млн.';
+            priceEl.setAttribute('data-price-processed', '1');
+          }
+        }
+      }
+      setTimeout(moveAndTransformPriceWithRetry, 500);
+
+      // MutationObserver для динамических изменений (только для complex-header)
+      var priceObserver = new MutationObserver(function() {
+        transformHeaderPrice();
+      });
+      var pricePlaceholder = document.getElementById('complex-header-price-placeholder');
+      if (pricePlaceholder) {
+        priceObserver.observe(pricePlaceholder, { childList: true, subtree: true });
+      }
+    });
+  </script>
+</body>
+</html>
