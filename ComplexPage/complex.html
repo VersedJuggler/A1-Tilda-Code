@@ -128,6 +128,19 @@
       max-width: 100%;
       border-radius: 10px;
     }
+    #complex-about {
+      /* ...existing code... */
+      align-items: stretch;
+    }
+    #complex-about > img {
+      width: 100%;
+      height: calc(100% - 20px);
+      object-fit: cover;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      display: block;
+    }
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -147,14 +160,28 @@
     }
     .form-section {
       background: #7ba6cc;
-      background-image: url('https://drive.google.com/uc?export=view&id=1V7u2s599H-7hDZAq5y67NqnmIany3z6d');
-      background-size: cover;
-      background-position: right center;
+      /* убираем background-image */
       min-height: 720px;
       display: flex;
       align-items: center;
       position: relative;
       overflow: hidden;
+    }
+    .form-section-bgimg {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: right center;
+      z-index: 1;
+      pointer-events: none;
+      user-select: none;
+      opacity: 1;
+      transition: opacity 0.3s;
     }
     .form-section::before {
       content: "";
@@ -165,7 +192,7 @@
     }
     .form-section .form-inner {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       max-width: 700px;
       width: 100%;
       margin-left: 60px;
@@ -179,6 +206,15 @@
       margin-bottom: 32px;
       font-weight: 400;
       letter-spacing: 0;
+    }
+    .form-section .form-caption.form-caption-large {
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 32px;
+      margin-top: 0px;
+      line-height: 127%;
+      letter-spacing: -0.04em;
+      font-weight: 400;
     }
     .form-section h2 {
       font-size: 56px;
@@ -194,7 +230,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 20px 32px;
       width: 100%;
-      margin-bottom: 16px;
+      margin-bottom: 28px;
     }
     .complex-form-fields label {
       font-size: 16px;
@@ -235,14 +271,20 @@
       background: #000;
       color: #fff;
       border: none;
-      border-radius: 8px;
-      font-size: 18px;
+      border-radius: 4px;
+      font-size: 14px;
       font-weight: 400;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, color 0.2s, border 0.2s;
     }
     .complex-form-submit button:hover {
       background: #222;
+    }
+    .complex-form-submit button.submitted {
+      background: #fff;
+      color: #000;
+      border: 3px solid #000;
+      font-weight: 600;
     }
     .complex-form-note {
       font-size: 13px;
@@ -366,7 +408,8 @@
       overflow: hidden;
     }
     .complex-header-inner,
-    .section {
+    .section,
+    .form-inner {
       max-width: 1250px;
       margin-left: auto;
       margin-right: auto;
@@ -477,21 +520,23 @@
   </div>
 
   <div class="form-section" id="complex-form">
+    <img class="form-section-bgimg" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/2543ee3a5ed0805cab0e8e6623dd9d4f5c01cd45/ComplexPage/complex-form.png" alt="" draggable="false" />
     <div class="form-inner">
       <div class="form-caption">Свяжитесь с нами</div>
       <h2>Оставьте заявку<br>на подбор квартиры</h2>
-      <div class="form-caption" style="font-size:20px; color:#fff; margin-bottom:32px; margin-top:-12px;">
+      <div class="form-caption form-caption-large">
         Получите лучшие доступные предложения с актуальными ценами, акциями и условиями покупки
       </div>
-      <form>
+      <form id="complex-form-form">
         <div class="complex-form-fields">
           <div>
             <label>Бюджет</label>
             <select>
+              <option>до 10 млн.</option>
               <option>до 12 млн.</option>
-              <option>12–20 млн.</option>
-              <option>20–30 млн.</option>
-              <option>30+ млн.</option>
+              <option>от 12 до 15 млн.</option>
+              <option>от 15 до 20 млн.</option>
+              <option>от 20 млн. и более</option>
             </select>
           </div>
           <div>
@@ -502,17 +547,18 @@
               <option>2-комн.</option>
               <option>3-комн.</option>
               <option>4+ комн.</option>
+              <option>Рассматриваю варианты</option>
             </select>
           </div>
           <div class="fullwidth">
             <input type="text" name="name" placeholder="Имя">
           </div>
           <div class="fullwidth">
-            <input type="tel" name="phone" placeholder="Телефон">
+            <input type="tel" name="phone" id="complex-form-phone" placeholder="Телефон" autocomplete="tel" inputmode="tel" pattern="\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}">
           </div>
         </div>
         <div class="complex-form-submit">
-          <button type="submit">Оставить заявку</button>
+          <button type="submit" id="complex-form-submit-btn">Оставить заявку</button>
         </div>
         <div class="complex-form-note">
           Нажимая на кнопку «Оставить заявку» вы соглашаетесь на обработку персональных данных в соответствии с условиями политики конфиденциальности
@@ -553,6 +599,29 @@
         }
       }
       return false;
+    }
+
+    // Новая функция для установки фонового изображения и картинки about
+    function setHeaderAndAboutImagesFromBullets() {
+      // Найти thumb с data-slide-bullet-for="1"
+      const bullet1 = document.querySelector('.t-slds__thumbsbullet[data-slide-bullet-for="1"] .t-slds__bgimg[data-original]');
+      const bullet2 = document.querySelector('.t-slds__thumbsbullet[data-slide-bullet-for="2"] .t-slds__bgimg[data-original]');
+      // Фон complex-header
+      if (bullet1) {
+        const url1 = bullet1.getAttribute('data-original');
+        if (url1) {
+          document.getElementById('complex-header').style.backgroundImage = `url('${url1}')`;
+        }
+      }
+      // Левая картинка complex-about
+      if (bullet2) {
+        const url2 = bullet2.getAttribute('data-original');
+        const aboutImg = document.querySelector('#complex-about img');
+        if (aboutImg && url2) {
+          aboutImg.src = url2;
+        }
+      }
+      return !!(bullet1 || bullet2);
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -689,6 +758,18 @@
       }
       setTimeout(moveGalleryWithRetry, 500);
 
+      // --- Новый механизм подстановки фоновых и about-изображений ---
+      if (!setHeaderAndAboutImagesFromBullets()) {
+        let applied = false;
+        const interval = setInterval(() => {
+          if (setHeaderAndAboutImagesFromBullets()) {
+            applied = true;
+            clearInterval(interval);
+          }
+        }, 300);
+        setTimeout(() => { if (!applied) clearInterval(interval); }, 30000);
+      }
+
       // Применяем фон сразу, если возможно, иначе запускаем setInterval
       if (!setHeaderBackgroundFromAnyImg()) {
         let applied = false;
@@ -738,6 +819,56 @@
       var pricePlaceholder = document.getElementById('complex-header-price-placeholder');
       if (pricePlaceholder) {
         priceObserver.observe(pricePlaceholder, { childList: true, subtree: true });
+      }
+
+      // Кнопка "Оставить заявку" - анимация после отправки
+      var form = document.getElementById('complex-form-form');
+      var btn = document.getElementById('complex-form-submit-btn');
+      if (form && btn) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          btn.classList.add('submitted');
+          btn.textContent = 'Заявка получена ✓';
+        });
+      }
+
+      // Маска для телефона: +7 (___) ___-__-__
+      var phoneInput = document.getElementById('complex-form-phone');
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+          let value = phoneInput.value.replace(/\D/g, '');
+          if (value.startsWith('8')) value = value.slice(1);
+          if (value.startsWith('7')) value = value.slice(1);
+          value = value.slice(0, 10); // только 10 цифр после +7
+
+          let formatted = '+7';
+          if (value.length > 0) formatted += ' (' + value.substring(0, 3);
+          if (value.length >= 4) formatted += ') ' + value.substring(3, 6);
+          if (value.length >= 7) formatted += '-' + value.substring(6, 8);
+          if (value.length >= 9) formatted += '-' + value.substring(8, 10);
+
+          // Добавить закрывающую скобку если пользователь ввел 3 цифры кода
+          if (value.length > 0 && value.length < 4) formatted += '';
+          if (value.length >= 4) formatted = formatted.replace('(', '(').replace(')', ')');
+
+          phoneInput.value = formatted;
+        });
+
+        // Блокировать ввод не-цифр (разрешить только цифры, backspace, стрелки)
+        phoneInput.addEventListener('keydown', function(e) {
+          // Разрешить служебные клавиши
+          if (
+            e.key === "Backspace" ||
+            e.key === "Delete" ||
+            e.key === "ArrowLeft" ||
+            e.key === "ArrowRight" ||
+            e.key === "Tab"
+          ) return;
+          // Разрешить только цифры
+          if (!/\d/.test(e.key)) {
+            e.preventDefault();
+          }
+        });
       }
     });
   </script>
