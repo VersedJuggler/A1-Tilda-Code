@@ -1,876 +1,2127 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Счастье в Казани</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* Скрываем исходный блок со сниппетом, чтобы не мешал */
-    .t-store.t-store__prod-snippet__container {
-      /* display: none !important;*/
-    }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-    body {
-      background: #f6f6f6;
-      color: #000;
-      line-height: 1.6;
-    }
-    #complex-header {
-      position: relative;
-      height: 425px;
-      /* Фоновое изображение будет задано через JS */
-      background-size: cover;
-      background-position: top center;
-      color: #fff;
-      display: flex;
-      align-items: flex-end;
-    }
-    #complex-header::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 0;
-    }
-    .complex-header-inner {
-      position: relative;
-      z-index: 1;
-      max-width: 1300px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 80px 20px 55px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      height: 100%;
-    }
-    .text {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    #back-button {
-      background: none;
-      border: none;
-      font-size: 14px;
-      font-weight: 400;
-      line-height: normal;
-      color: rgba(255, 255, 255, 0.6);
-      cursor: pointer;
-      margin-bottom: 100px;
-      padding: 0;
-      align-self: flex-start;
-    }
-    #complex-header h1 {
-      font-size: 64px;
-      font-weight: 400;
-      line-height: 60px;
-      margin-bottom: 24px;
-    }
-    #complex-header p {
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.8);
-    }
-    .price-box {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-    }
-    .price-info {
-      display: flex;
-      gap: 60px;
-      align-items: flex-start;
-    }
-    .price-info div {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      font-size: 16px;
-      text-align: left;
-    }
-    .price-number, .area-number {
-      font-size: 40px;
-      font-weight: 400;
-      line-height: 1;
-      margin: 0;
-    }
-    #consultation-button {
-      width: 559px;
-      height: 63px;
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 13.44px;
-      cursor: pointer;
-      margin-top: 50px;
-    }
-    .section {
-      padding: 40px 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    .section img {
-      max-width: 100%;
-      border-radius: 10px;
-    }
-    #complex-about {
-      /* ...existing code... */
-      align-items: stretch;
-    }
-    #complex-about > img {
-      width: 100%;
-      height: calc(100% - 20px);
-      object-fit: cover;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      display: block;
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-    }
-    .card-list {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-top: 20px;
-    }
-    .card {
-      flex: 1 1 200px;
-      background: #f7f7f7;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    .form-section {
-      background: #7ba6cc;
-      /* убираем background-image */
-      min-height: 720px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .form-section-bgimg {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: right center;
-      z-index: 1;
-      pointer-events: none;
-      user-select: none;
-      opacity: 1;
-      transition: opacity 0.3s;
-    }
-    .form-section::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(122, 164, 204, 0.85);
-      z-index: 0;
-    }
-    .form-section .form-inner {
-      position: relative;
-      z-index: 2;
-      max-width: 700px;
-      width: 100%;
-      margin-left: 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .form-section .form-caption {
-      font-size: 16px;
-      color: #e6f0fa;
-      margin-bottom: 32px;
-      font-weight: 400;
-      letter-spacing: 0;
-    }
-    .form-section .form-caption.form-caption-large {
-      font-size: 20px;
-      color: #fff;
-      margin-bottom: 32px;
-      margin-top: 0px;
-      line-height: 127%;
-      letter-spacing: -0.04em;
-      font-weight: 400;
-    }
-    .form-section h2 {
-      font-size: 56px;
-      font-weight: 400;
-      line-height: 110%;
-      color: #fff;
-      margin-bottom: 24px;
-      margin-top: 0;
-      letter-spacing: -0.04em;
-    }
-    .complex-form-fields {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px 32px;
-      width: 100%;
-      margin-bottom: 28px;
-    }
-    .complex-form-fields label {
-      font-size: 16px;
-      color: #fff;
-      margin-bottom: 8px;
-      font-weight: 400;
-      display: block;
-    }
-    .complex-form-fields select,
-    .complex-form-fields input {
-      width: 100%;
-      padding: 16px 18px;
-      font-size: 18px;
-      border-radius: 8px;
-      border: none;
-      background: #fff;
-      color: #222;
-      margin-bottom: 0;
-      box-sizing: border-box;
-      outline: none;
-      transition: box-shadow 0.2s;
-    }
-    .complex-form-fields select:focus,
-    .complex-form-fields input:focus {
-      box-shadow: 0 0 0 2px #2222cc33;
-    }
-    .complex-form-fields .fullwidth {
-      grid-column: 1 / span 2;
-    }
-    .complex-form-submit {
-      width: 100%;
-      margin-top: 12px;
-      margin-bottom: 18px;
-    }
-    .complex-form-submit button {
-      width: 260px;
-      height: 56px;
-      background: #000;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 400;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s, border 0.2s;
-    }
-    .complex-form-submit button:hover {
-      background: #222;
-    }
-    .complex-form-submit button.submitted {
-      background: #fff;
-      color: #000;
-      border: 3px solid #000;
-      font-weight: 600;
-    }
-    .complex-form-note {
-      font-size: 13px;
-      color: #c9d6e5;
-      margin-top: 8px;
-      max-width: 90%;
-      line-height: 1.3;
-    }
-    @media (max-width: 900px) {
+  <html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Счастье в Казани</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      /* Скрываем исходный блок со сниппетом, чтобы не мешал */
+      .t-store.t-store__prod-snippet__container {
+        display: none !important;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+      }
+      body {
+        background: #f6f6f6;
+        color: #000;
+        line-height: 1.6;
+      }
+      #complex-header {
+        position: relative;
+        height: 425px;
+        /* Фоновое изображение будет задано через JS */
+        background-size: cover;
+        background-position: top center;
+        color: #fff;
+        display: flex;
+        align-items: flex-end;
+      }
+      #complex-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 0;
+      }
+      .complex-header-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 1300px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 80px 20px 55px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        height: 100%;
+      }
+      .text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #back-button {
+        background: none;
+        border: none;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: normal;
+        color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        margin-bottom: 100px;
+        padding: 0;
+        align-self: flex-start;
+      }
+      #complex-header h1 {
+        font-size: 64px;
+        font-weight: 400;
+        line-height: 60px;
+        margin-bottom: 24px;
+      }
+      #complex-header p {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .price-box {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Было flex-end, теперь прижато влево */
+        gap: 12px;
+      }
+      .price-info {
+        display: flex;
+        gap: 60px;
+        align-items: flex-start;
+      }
+      .price-info div {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        font-size: 16px;
+        text-align: left;
+      }
+      .price-number, .area-number {
+        font-size: 40px;
+        font-weight: 400;
+        line-height: 1;
+        margin: 0;
+      }
+      #consultation-button {
+        width: 559px;
+        height: 63px;
+        background: #fff;
+        color: #000;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 13.44px;
+        cursor: pointer;
+        margin-top: 50px;
+      }
+      .section {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: auto;
+      }
+      .section img {
+        max-width: 100%;
+        border-radius: 10px;
+      }
+      #complex-about {
+        /* ...existing code... */
+        align-items: stretch;
+      }
+      #complex-about > img {
+        width: 100%;
+        height: calc(100% - 20px);
+        object-fit: cover;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        display: block;
+      }
+      .about-text {
+        padding-left: 25px;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+      .card-list {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+      .card {
+        
+        background: #f7f7f7;
+        padding: 20px;
+        border-radius: 8px;
+      }
       .form-section {
-        min-height: 600px;
-        padding: 30px 0;
+        background: #7ba6cc;
+        /* убираем background-image */
+        min-height: 720px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .form-section-bgimg {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: right center;
+        z-index: 1;
+        pointer-events: none;
+        user-select: none;
+        opacity: 1;
+        transition: opacity 0.3s;
+      }
+      .form-section::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(122, 164, 204, 0.85);
+        z-index: 0;
       }
       .form-section .form-inner {
-        margin-left: 20px;
-        max-width: 100%;
+        position: relative;
+        z-index: 2;
+        max-width: 700px;
+        width: 100%;
+        margin-left: 65px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 55px;
+      }
+      .form-section .form-caption {
+        font-size: 16px;
+        color: #e6f0fa;
+        margin-bottom: 32px;
+        font-weight: 400;
+        letter-spacing: 0;
+        margin-top: 58px;
+      }
+      .form-section .form-caption.form-caption-large {
+        font-size: 20px;
+        color: #fff;
+        margin-bottom: 32px;
+        margin-top: 0px;
+        line-height: 127%;
+        letter-spacing: -0.04em;
+        font-weight: 400;
       }
       .form-section h2 {
-        font-size: 36px;
+        font-size: 56px;
+        font-weight: 400;
+        line-height: 110%;
+        color: #fff;
+        margin-bottom: 24px;
+        margin-top: 0;
+        letter-spacing: -0.04em;
       }
       .complex-form-fields {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px 32px;
+        width: 100%;
+        margin-bottom: 28px;
+      }
+      .complex-form-fields label {
+        font-size: 16px;
+        color: #fff;
+        margin-bottom: 8px;
+        font-weight: 400;
+        display: block;
+      }
+      .complex-form-fields select,
+      .complex-form-fields input {
+        width: 100%;
+        padding: 16px 18px;
+        font-size: 18px;
+        border-radius: 8px;
+        border: none;
+        background: #fff;
+        color: #222;
+        margin-bottom: 0;
+        box-sizing: border-box;
+        outline: none;
+        transition: box-shadow 0.2s;
+      }
+      .complex-form-fields select {
+        width: 100%;
+        padding: 16px 18px;
+        font-size: 18px;
+        border-radius: 8px;
+        border: none;
+        background: #fff;
+        color: #222;
+        margin-bottom: 0;
+        box-sizing: border-box;
+        outline: none;
+        transition: box-shadow 0.2s;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: none;
+        background-color: #fff;
+        position: relative;
+        padding-right: 40px;
+        background-image: url('https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/triangle.png');
+        background-repeat: no-repeat;
+        background-position: right 20px center;
+        background-size: 11px 11px;
+        /* Center text vertically for all browsers */
+        display: flex;
+        align-items: center;
+        height: 52px;
+        line-height: 1.2;
+      }
+      .complex-form-fields select option {
+        /* Ensure options are vertically centered and not clipped */
+        padding-top: 12px;
+        padding-bottom: 12px;
+        line-height: 1.2;
+        font-size: 18px;
+        color: #888;
+        /* Remove default browser styles that may cause clipping */
+        box-sizing: border-box;
+      }
+      .complex-form-fields select {
+        min-width: 0;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background: none;
+        background-color: #fff;
+        position: relative;
+        padding-right: 40px;
+        background-image: url('https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/triangle.png');
+        background-repeat: no-repeat;
+        background-position: right 20px center;
+        background-size: 11px 11px;
+      }
+      .complex-form-fields select:focus,
+      .complex-form-fields input:focus {
+        /*box-shadow: 0 0 0 2px #2222cc33;*/
       }
       .complex-form-fields .fullwidth {
-        grid-column: 1;
+        grid-column: 1 / span 2;
+      }
+      .complex-form-submit {
+        width: 100%;
+        margin-top: 12px;
+        margin-bottom: 18px;
       }
       .complex-form-submit button {
-        width: 100%;
+        width: 260px;
+        height: 56px;
+        background: #000;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, border 0.2s;
       }
-    }
-    /* Стили для блока complex-about */
-    #complex-about h2 {
-      font-size: 48px;
-      font-weight: 400;
-      margin-bottom: 40px;
-    }
-    /* Стили для описания ЖК */
-    #complex-about-text {
-      font-size: 16px;
-      line-height: 120%;
-      letter-spacing: -0.04em;
-      color: rgba(0, 0, 0, 0.5);
-    }
-    /* Отступ перед характеристиками */
-    #complex-charcs-placeholder {
-      margin-top: 60px;
-    }
-    /* Стили для характеристик в две колонки */
-    #complex-charcs-placeholder p.t-typography__characteristics.js-store-prod-charcs {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 14px;
-      line-height: 1.4;
-      border-bottom: 1px solid #000;
-      padding-bottom: 8px;
-    }
-    #complex-charcs-placeholder .char-key {
-      font-weight: 500;
-    }
-    #complex-charcs-placeholder .char-value {
-      text-align: right;
-    }
-    #complex-comfort h2 {
-      font-size: 48px;
-      font-weight: 400;
-      letter-spacing: -0.04em;
-      margin-bottom: 50px;
-      line-height: 100%;
-    }
-    #complex-comfort .card-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      margin-top: 20px;
-    }
-    #complex-comfort .card {
-      width: 616px;
-      min-width: 616px;
-      max-width: 616px;
-      height: 108px;
-      min-height: 108px;
-      max-height: 108px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-      padding: 22px 24px 18px 24px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      box-sizing: border-box;
-    }
-    #complex-comfort .card-desc {
-      font-size: 14px;
-      font-weight: 400;
-      color: #888;
-      margin-top: 4px;
-    }
-    #complex-comfort.grid-2 {
-      align-items: center;
-    }
-    #complex-comfort-gallery-placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 15px;
-      width: 100%;
-      max-width: 100%;
-      transform: scale(0.9);
-    }
-    /* Радиус для элементов галереи */
-    .t-slds__imgwrapper.t-zoomable,
-    .t-slds__bgimg.t-bgimg.loaded,
-    .t-slds__thumbsbullet,
-    .t-slds__bullet {
-      border-radius: 8px !important;
-      overflow: hidden;
-    }
-    .complex-header-inner,
-    .section,
-    .form-inner {
-      max-width: 1250px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    #complex-invest h2 {
-      font-size: 48px;
-      font-weight: 400;
-      letter-spacing: -0.04em;
-      line-height: 100%;
-      margin-bottom: 50px;
-      max-width: 658px;
-    }
-    #complex-invest .card-list {
-      display: flex;
-      gap: 32px;
-      margin-top: 0;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    #complex-invest .card {
-      width: 270px;
-      min-width: 270px;
-      max-width: 270px;
-      height: 270px;
-      min-height: 270px;
-      max-height: 270px;
-      background: #fff;
-      border-radius: 16px;
-      padding: 32px 24px 24px 24px;
-      font-size: 24px;
-      font-weight: 400;
-      letter-spacing: -0.04em;
-      line-height: 100%;
-      color: #222;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      box-sizing: border-box;
-      position: relative;
-      gap: 0;
-    }
-    #complex-header-price-placeholder .js-product-price {
-      font-size: 40px;
-      font-weight: 400;
-      line-height: 1;
-      text-align: left;
-      display: block;
-    }
-  </style>
-</head>
-<body>
-<div id="complex-page">
- <div id="complex-header">
-    <div class="complex-header-inner">
-      <div class="text">
-        <button id="back-button" onclick="history.back()">← на главную</button>
-        <h1>Счастье в Казани</h1>
-        <p>Сочетание урбанистической жизни и природной красоты</p>
-      </div>
-      <div class="price-box">
-        <div class="price-info">
-          <div>
-            <span>Стоимость</span>
-            <span id="complex-header-price-placeholder"></span>
-          </div>
-          <div>
-            <span>Площадь</span>
-            <span class="area-number">26.0 – 63.1 м²</span>
-          </div>
-        </div>
-        <button id="consultation-button">Получить консультацию</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="section grid-2" id="complex-about">
-    <img src="building.jpg" alt="Жилой комплекс">
-    <div>
-      <h2>О комплексе</h2>
-      <p id="complex-about-text"></p>
-      <div id="complex-charcs-placeholder"></div>
-    </div>
-  </div>
-  </div>
-
-  <div class="section grid-2" id="complex-comfort">
-    <div>
-      <h2>Комфортные условия жилого комплекса</h2>
-      <div class="card-list">
-        <div class="card">Природный оазис<br><span class="card-desc">Собственный парк и река внутри города</span></div>
-        <div class="card">Доступность<br><span class="card-desc">Собственный парк и река внутри города</span></div>
-        <div class="card">Природный оазис<br><span class="card-desc">Собственный парк и река внутри города</span></div>
-        <div class="card">Доступность<br><span class="card-desc">Собственный парк и река внутри города</span></div>
-      </div>
-    </div>
-    <div id="complex-comfort-gallery-placeholder"></div>
-  </div>
-
-  <div class="section" id="complex-invest">
-    <h2>Условия сделки и инвестиционный потенциал</h2>
-    <div class="card-list">
-      <div class="card">30% прирост с момента старта</div>
-      <div class="card">Покупка в ипотеку</div>
-      <div class="card">Рассрочка от застройщика</div>
-      <div class="card">Безопасная сделка по 03-ФЗ</div>
-    </div>
-  </div>
-
-  <div class="form-section" id="complex-form">
-    <img class="form-section-bgimg" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/2543ee3a5ed0805cab0e8e6623dd9d4f5c01cd45/ComplexPage/complex-form.png" alt="" draggable="false" />
-    <div class="form-inner">
-      <div class="form-caption">Свяжитесь с нами</div>
-      <h2>Оставьте заявку<br>на подбор квартиры</h2>
-      <div class="form-caption form-caption-large">
-        Получите лучшие доступные предложения с актуальными ценами, акциями и условиями покупки
-      </div>
-      <form id="complex-form-form">
-        <div class="complex-form-fields">
-          <div>
-            <label>Бюджет</label>
-            <select>
-              <option>до 10 млн.</option>
-              <option>до 12 млн.</option>
-              <option>от 12 до 15 млн.</option>
-              <option>от 15 до 20 млн.</option>
-              <option>от 20 млн. и более</option>
-            </select>
-          </div>
-          <div>
-            <label>Планировка</label>
-            <select>
-              <option>Студия</option>
-              <option>1-комн.</option>
-              <option>2-комн.</option>
-              <option>3-комн.</option>
-              <option>4+ комн.</option>
-              <option>Рассматриваю варианты</option>
-            </select>
-          </div>
-          <div class="fullwidth">
-            <input type="text" name="name" placeholder="Имя">
-          </div>
-          <div class="fullwidth">
-            <input type="tel" name="phone" id="complex-form-phone" placeholder="Телефон" autocomplete="tel" inputmode="tel" pattern="\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}">
-          </div>
-        </div>
-        <div class="complex-form-submit">
-          <button type="submit" id="complex-form-submit-btn">Оставить заявку</button>
-        </div>
-        <div class="complex-form-note">
-          Нажимая на кнопку «Оставить заявку» вы соглашаетесь на обработку персональных данных в соответствии с условиями политики конфиденциальности
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-  <script>
-    // Скрытие элементов для complex-moscow
-    if (window.location.href === "https://a1-brokers.com/complex-moscow") {
-      const elementsToHide = [
-        document.getElementById("complex-header"),
-        document.getElementById("complex-about"),
-        document.getElementById("complex-comfort"),
-        document.getElementById("complex-invest"),
-        document.getElementById("complex-form")
-      ];
-      elementsToHide.forEach(el => {
-        if (el) el.style.display = "none";
-      });
-    }
-
-    // Функция установки фонового изображения (ищет любой t-slds__bgimg.t-bgimg.js-product-img)
-    function setHeaderBackgroundFromAnyImg() {
-      // 1. Пробуем найти любой div с data-original (даже если не loaded)
-      let bgDiv = document.querySelector("div.t-slds__bgimg.t-bgimg.js-product-img[data-original]");
-      if (!bgDiv) {
-        // 2. Если не найден, ищем loaded
-        bgDiv = document.querySelector("div.t-slds__bgimg.t-bgimg.loaded[data-original]");
+      .complex-form-submit button:hover {
+        background: #222;
       }
-      if (bgDiv) {
-        const imageUrl = bgDiv.dataset.original || bgDiv.style.backgroundImage.replace(/url\(["']?|["']?\)/g, '');
-        if (imageUrl) {
-          document.getElementById('complex-header').style.backgroundImage = `url('${imageUrl}')`;
-          return true;
+      .complex-form-submit button.submitted {
+        background: #fff;
+        color: #000;
+        font-weight: 600;
+      }
+      .complex-form-note {
+        font-size: 13px;
+        color: #c9d6e5;
+        margin-top: 8px;
+        max-width: 90%;
+        line-height: 1.3;
+      }
+      @media (max-width: 900px) {
+        .form-section {
+          min-height: 600px;
+          padding: 30px 0;
+        }
+        .form-section .form-inner {
+          margin-left: 20px;
+          max-width: 100%;
+        }
+        .form-section h2 {
+          font-size: 36px;
+        }
+        .complex-form-fields {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        .complex-form-fields .fullwidth {
+          grid-column: 1;
+        }
+        .complex-form-submit button {
+          width: 100%;
+        }
+        .complex-form-fields select {
+          height: 50px;
+          font-size: 16px;
+          padding: 14px 14px;
+          display: flex;
+          align-items: center;
+        }
+        .complex-form-fields select option {
+          font-size: 16px;
+          padding-top: 10px;
+          padding-bottom: 10px;
         }
       }
-      return false;
-    }
-
-    // Новая функция для установки фонового изображения и картинки about
-    function setHeaderAndAboutImagesFromBullets() {
-      // Найти thumb с data-slide-bullet-for="1"
-      const bullet1 = document.querySelector('.t-slds__thumbsbullet[data-slide-bullet-for="1"] .t-slds__bgimg[data-original]');
-      const bullet2 = document.querySelector('.t-slds__thumbsbullet[data-slide-bullet-for="2"] .t-slds__bgimg[data-original]');
-      // Фон complex-header
-      if (bullet1) {
-        const url1 = bullet1.getAttribute('data-original');
-        if (url1) {
-          document.getElementById('complex-header').style.backgroundImage = `url('${url1}')`;
-        }
+      /* Стили для блока complex-about */
+      #complex-about h2 {
+        font-size: 48px;
+        margin-bottom: 18px;
       }
-      // Левая картинка complex-about
-      if (bullet2) {
-        const url2 = bullet2.getAttribute('data-original');
-        const aboutImg = document.querySelector('#complex-about img');
-        if (aboutImg && url2) {
-          aboutImg.src = url2;
-        }
+      /* Стили для описания ЖК */
+      #complex-about-text {
+        font-size: 14px;
+        line-height: 1.45;
+        margin-bottom: 18px;
+        letter-spacing: -0.04em;
+        color: rgba(0, 0, 0, 0.5);
       }
-      return !!(bullet1 || bullet2);
-    }
+      /* Отступ перед характеристиками */
+      #complex-charcs-placeholder {
+        margin-top: 18px;
+      }
+      /* Стили для характеристик в две колонки */
+      #complex-charcs-placeholder p.t-typography__characteristics.js-store-prod-charcs {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        font-size: 13px;
+        line-height: 1.4;
+        border-bottom: 1px solid #000;
+        padding-bottom: 12px;
+      }
+        #complex-charcs-placeholder .char-key {
+          font-weight: 500;
+          word-break: normal;
+          hyphens: none;
+        }
 
-    document.addEventListener("DOMContentLoaded", function() {
-      /** 1. Преобразование цены в «от X.X млн.» и класс price-millions */
-      function transformProductPrices() {
-        document.querySelectorAll('.js-product-price[data-product-price-def-str]').forEach(function(el) {
-          var raw = el.getAttribute('data-product-price-def-str') || '';
-          var value = parseInt(raw.replace(/\D/g, ''), 10);
-          if (isNaN(value)) return;
-          var formatted = 'от ' + (value / 1e6).toFixed(1) + ' млн';
-          if (el.textContent.trim() !== formatted) {
-            el.textContent = formatted;
-            el.classList.add('price-millions');
+        @media (max-width: 600px) {
+          #complex-charcs-placeholder .char-key {
+            color: rgba(0, 0, 0, 0.5) !important;
+            word-break: normal;
+            hyphens: none;
           }
+        }
+      #complex-charcs-placeholder .char-value {
+        text-align: right;
+      }
+      #complex-comfort h2 {
+        font-size: 48px;
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        margin-bottom: 50px;
+        line-height: 100%;
+      }
+      #complex-comfort .card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 20px;
+      }
+      #complex-comfort .card {
+        width: 590px;
+        min-width: 590px;
+        max-width: 590px;
+        height: 108px;
+        min-height: 108px;
+        max-height: 108px;
+        background: #fff;
+        border-radius: 10px;
+        padding: 22px 24px 18px 24px;
+        font-size: 18px;
+        font-weight: 400; /* Было 600, теперь обычный */
+        color: #222;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        box-sizing: border-box;
+        position: relative;
+        align-items: start; 
+        justify-content: center; 
+        text-align: left; 
+      }
+      #complex-comfort .card .comfort-dot {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 8px;
+        height: 8px;
+        background: #000;
+        border-radius: 3px;
+        z-index: 2;
+        display: block;
+        content: "";
+      }
+      #complex-comfort.grid-2 {
+        align-items: center;
+      }
+      #complex-comfort-gallery-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15px;
+        width: 100%;
+        max-width: 100%;
+      }
+      /* Радиус для элементов галереи */
+      .t-slds__imgwrapper.t-zoomable,
+      .t-slds__bgimg.t-bgimg.loaded,
+      .t-slds__thumbsbullet,
+      .t-slds__bullet {
+        border-radius: 8px !important;
+        overflow: hidden;
+      }
+      .complex-header-inner,
+      .section,
+      .form-inner {
+        max-width: 1250px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #complex-invest h2 {
+        font-size: 48px;
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        line-height: 100%;
+        margin-bottom: 50px;
+        max-width: 658px;
+      }
+      #complex-invest .card-list {
+        display: flex;
+        gap: 22px;
+        margin-top: 0;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #complex-invest .card {
+        width: 2770px;
+        min-width: 285px;
+        max-width: 285px;
+        height: 285px;
+        min-height: 285px;
+        max-height: 285px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 25px 25px 25px 24px;
+        font-size: 24px;
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        line-height: 100%;
+        color: #222;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        position: relative;
+      }
+      #complex-invest .card .invest-card-img {
+        position: static;
+        margin-bottom: 24px;
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        z-index: 1;
+        pointer-events: none;
+        user-select: none;
+        display: block;
+      }
+      .invest-card-title {
+        font-size: 24px;
+        font-weight: 400;
+        letter-spacing: -0.04em;
+        line-height: 100%;
+        color: #222;
+        margin-top: 0;
+        display: block;
+      }
+      .invest-card-caption {
+        font-size: 15px;
+        line-height: 100%;
+        letter-spacing: -0.04em;
+        color: rgba(0,0,0,0.7);
+        font-weight: 400;
+        pointer-events: none;
+        user-select: none;
+        margin: 0;
+        margin-top: auto;
+        align-self: flex-start;
+      }
+      #complex-header-price-placeholder .js-product-price {
+        font-size: 40px;
+        font-weight: 400;
+        line-height: 1;
+        text-align: left;
+        display: block;
+      }
+
+      /* === Overlay card styles for complex-about === */
+      .about-img-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 340px;
+        display: flex;
+        align-items: stretch;
+      }
+      .about-img-wrapper img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 340px;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+      .about-overlay-card {
+        position: absolute;
+        right: 25px;
+        bottom: 25px;
+        left: auto;
+        top: auto;
+        width: 300px;
+        min-width: 300px;
+        max-width: 300px;
+        height: 300px;
+        min-height: 300px;
+        max-height: 300px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
+        padding: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        box-sizing: border-box;
+      }
+      .about-overlay-icon {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        right: auto;
+        width: 40px !important;
+        height: 40px !important;
+        max-width: 40px !important;
+        max-height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        border-radius: 0 !important;
+        object-fit: contain !important;
+        background: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+      }
+      .about-overlay-title {
+        font-size: 24px;
+        font-weight: 400;
+        color: #222;
+        margin: 0;
+        line-height: 1.1;
+        margin-top: 150px;
+        margin-left: 25px;
+        margin-right: 25px;
+        max-width: 220px;
+        letter-spacing: -0.04em;
+      }
+      .about-overlay-caption {
+        font-size: 13px;
+        color: #888;
+        line-height: 100%;
+        margin-top: 15px;
+        margin-left: 25px;
+        margin-right: 25px;
+        letter-spacing: -0.04em;
+        margin-bottom: 20px;
+      }
+
+      @media (max-width: 600px) {
+        .about-img-wrapper {
+          min-height: 490px !important;
+          max-height: 490px !important;
+          height: 490px !important;
+          border-radius: 8px;
+          margin: 60px 0 0 0;
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .about-img-wrapper img {
+          min-height: 490px;
+          max-height: 490px;
+          height: 100% !important;
+          width: 100%;
+          object-fit: cover;
+          object-position: center;
+          border-radius: 8px;
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        .about-overlay-card {
+          width: 90vw;
+          min-width: 0;
+          max-width: 95vw;
+          min-height: 0;
+          height: auto;
+          left: 50%;
+          top: 50%;
+          right: auto;
+          bottom: auto;
+          transform: translate(-50%, -50%);
+          border-radius: 16px;
+          box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
+          background: #fff;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: flex-start;
+          padding: 24px 20px 18px 20px;
+          z-index: 2;
+          box-sizing: border-box;
+        }
+        .about-overlay-card .about-overlay-row {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+          margin-bottom: 27px;
+        }
+        .about-overlay-icon {
+          position: static !important;
+          width: 32px !important;
+          height: 32px !important;
+          margin: 0 !important;
+          display: block !important;
+          margin-right: 21.5px !important;
+        }
+        .about-overlay-caption {
+          font-size: 13px;
+          color: #444;
+          line-height: 1.25;
+          margin: 0;
+          font-weight: 400;
+        }
+      }
+
+      @media (max-width: 600px) {
+        /* complex-header уже стилизован выше */
+        /* complex-about */
+        .section {
+          padding: 20px 10px;
+          margin-left: 35px; /* отступы complex */
+          margin-right: 35px;
+        }
+        
+        #complex-about {
+          grid-template-columns: 1fr;
+          gap: 0;
+          padding: 0 0 32px 0;
+          
+          margin-bottom: 50px;
+        }
+
+        #back-button {
+          margin-bottom: 38px;
+        }
+
+        .about-img-wrapper {
+          min-height: 490px !important; 
+          max-height: 490px !important;
+          height: 490px !important;
+          border-radius: 8px;
+          margin: 60px 0 0 0;
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .about-img-wrapper img {
+          min-height: 490px;
+          max-height: 490px;
+          height: 100% !important;
+          width: 100%;
+          object-fit: cover;
+          object-position: center;
+          border-radius: 8px;
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        .about-overlay-card {
+          width: 75vw;
+          min-width: 0;
+          max-width: 75vw;
+          min-height: 0;
+          height: auto;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          border-radius: 16px;
+          box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
+          background: #fff;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: flex-start;
+          padding: 24px 20px 18px 20px;
+          z-index: 2;
+          box-sizing: border-box;
+        }
+        .about-overlay-card .about-overlay-row {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+          margin-bottom: 27px;
+        }
+        .about-overlay-icon {
+          position: static !important;
+          width: 32px !important;
+          height: 32px !important;
+          margin: 0 !important;
+          display: block !important;
+          margin-right: 21.5px !important;
+        }
+        .about-overlay-title {
+          font-size: 1.3125em;
+          font-weight: 400;
+          color: #111;
+          margin: 0;
+          line-height: 1;
+          max-width: 100%;
+          letter-spacing: -0.04em;
+          display: block;
+        }
+        .about-overlay-caption {
+          font-size: 13px;
+          color: #444;
+          line-height: 1.25;
+          margin: 0;
+          font-weight: 400;
+        }
+        .about-text {
+          padding: 0;
+          margin-top: 24px;
+        }
+        #complex-about h2 {
+          font-size: 28px;
+          margin-bottom: 30px;
+        }
+        #complex-about-text {
+          font-size: 14px;
+          margin-bottom: 50px;
+        }
+        #complex-charcs-placeholder {
+          margin-top: 18px;
+        }
+        #complex-charcs-placeholder p.t-typography__characteristics.js-store-prod-charcs {
+          font-size: 13px;
+          padding-bottom: 12px;
+          margin-bottom: 18px;
+        }
+        @media (max-width: 600px) {
+          #complex-charcs-placeholder .char-key {
+            margin-right: 1.25em;
+          }
+        }
+        /* complex-comfort */
+        #complex-comfort {
+          grid-template-columns: 1fr;
+          gap: 0;
+          padding: 0 0 32px 0;
+          margin-bottom: 50px;
+        }
+        #complex-comfort h2 {
+          font-size: 28px;
+          margin-bottom: 30px;
+          padding: 0;
+        }
+        #complex-comfort .card-list {
+          gap: 10px;
+          margin-top: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          margin-bottom: 50px;
+        }
+        #complex-comfort .card {
+          width: 100%;
+          min-width: 0;
+          max-width: 100%;
+          height: 80px;
+          min-height: 80px;
+          max-height: 80px;
+          font-size: 14px;
+          border-radius: 8px;
+          padding: 14px 14px 12px 14px;
+          gap: 4px;
+          box-sizing: border-box;
+          display: flex;
+          align-items: start;
+        }
+        #complex-comfort .comfort-dot {
+          display: none !important;
+        }
+        #complex-comfort-gallery-placeholder {
+          margin-top: 12px;
+          padding: 0 0 0 0;
+        }
+        .custom-gallery-square {
+          width: 100vw;
+          max-width: 100vw;
+        }
+        .gallery-main {
+          width: 100vw;
+          height: 54vw;
+          border-radius: 12px;
+        }
+        .gallery-image-wrapper {
+          border-radius: 8px;
+        }
+        .gallery-image {
+          border-radius: 12px;
+        }
+        .gallery-thumbs-row {
+          display: none !important;
+        }
+        /* complex-invest */
+        #complex-invest {
+          padding: 0 0 32px 0;
+        }
+        #complex-invest h2 {
+          font-size: 28px;
+          margin-bottom: 30px;
+          padding: 0;
+          max-width: 100vw;
+        }
+        #complex-invest .card-list {
+          gap: 10px;
+          flex-direction: column;
+          padding: 0 20px;
+          margin-bottom: 50px;
+        }
+        .invest-card-img {
+          width: 28px;
+          height: 28px;
+          margin-bottom: 8px;
+        }
+        .invest-card-caption {
+          position: static;
+          font-size: 12px;
+          color: #888;
+          margin-top: 4px;
+          margin-bottom: 0;
+          line-height: 1.2;
+        }
+        /* complex-form */
+        .form-section {
+          min-height: 0;
+          border-radius: 0;
+        }
+        .form-section-bgimg {
+          display: none;
+        }
+        .form-inner {
+          margin-left: 35px !important;
+          margin-right: 35px;
+          max-width: 100%;
+          width: 100%;
+        }
+        .form-section h2 {
+          font-size: 28px;
+          margin-bottom: 18px;
+          margin-top: 0;
+          line-height: 1;
+          font-weight: 400;
+          letter-spacing: -0.04em;
+        }
+
+        .form-section .form-caption.form-caption-large {
+          font-size: 16px;
+          line-height: 1.27;
+          letter-spacing: -0.04em;
+          font-weight: 400;
+        }
+
+        .form-caption {
+          font-size: 13px;
+          margin-bottom: 23px;
+          margin-top: 50px;
+          color: rgba(255, 255, 255, 0.6);
+        }
+        .complex-form-fields {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px 12px;
+          margin-bottom: 23px;
+        }
+        .complex-form-fields label {
+          font-size: 16px;
+          margin-bottom: 6px;
+        }
+        .complex-form-fields select,
+        .complex-form-fields input {
+          font-size: 16px;
+          padding: 14px 14px;
+          border-radius: 10px;
+          height: 50px;
+        }
+        /* ...удалено, теперь общий стиль выше... */
+        .complex-form-fields .fullwidth {
+          grid-column: 1 / span 2;
+        }
+        .complex-form-submit {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+        .complex-form-submit button {
+          width: 100%;
+          height: 64px;
+          font-size: 14px;
+          border-radius: 4px;
+        }
+        .complex-form-note {
+          font-size: 11px;
+          margin-top: 4px;
+          max-width: 100vw;
+        }
+      }
+
+      @media (max-width: 600px) {
+        #complex-header h1 {
+          font-size: 36px;
+          line-height: 40px;
+          margin-bottom: 16px;
+        }
+        
+        #complex-header {
+          height: 100vh;
+          min-height: 600px;
+          max-height: 670px;
+          padding: 0;
+          background-position: center center;
+          border-radius: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+        }
+        .complex-header-inner {
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: flex-end;
+          margin: 0;
+          padding-left: 35px;  /*отступы complex-header*/
+          padding-right: 35px;
+          height: auto;
+          text-align: left;
+        }
+        .text {
+          width: 100%;
+          padding: 0 0;
+          margin-bottom: 0;
+          align-items: flex-start;
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+        }
+        .price-box {
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          align-items: flex-start;
+          gap: 18px;
+          margin-top: 50px;
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+        }
+        #consultation-button {
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
+          box-sizing: border-box;
+          order: 0;
+          margin-top: 0;
+          margin-bottom: 15px;
+          align-self: stretch;
+        }
+
+        #complex-header-price-placeholder .js-product-price {
+          font-size: 30px;
+          color: #fff;
+        }
+
+        .price-info {
+          order: 1;
+        }
+        .price-info {
+          flex-direction: column;
+          gap: 0;
+          align-items: flex-start;
+          width: 100%;
+          text-align: left;
+        }
+
+        .price-info span {
+          color: #C7C7C7;
+        }
+ 
+        .price-info div {
+          font-size: 15px;
+          gap: 6px;
+          margin-bottom: 0;
+          text-align: left;
+        }
+        .price-number {
+          font-size: 28px;
+          font-weight: 400;
+          margin: 0 0 0 0;
+          line-height: 1.1;
+          text-align: left;
+        }
+        /* Площадь скрыта на мобилке */
+        .area-number, .price-info > div:not(:first-child) { display: none !important; }
+      }
+      /* --- Поверх всех стилей: сброс для about-overlay-icon --- */
+      .section .about-overlay-card .about-overlay-icon {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        right: auto;
+        width: 40px !important;
+        height: 40px !important;
+        max-width: 40px !important;
+        max-height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+        border-radius: 0 !important;
+        object-fit: contain !important;
+        background: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        z-index: 2;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      @media (max-width: 600px) {
+        .gallery-main {
+          width: 100vw !important;
+          height: 100vw !important;
+          aspect-ratio: 1 / 1 !important;
+          min-width: 0;
+          min-height: 0;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .gallery-image-wrapper {
+          width: 100%;
+          height: 100%;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .gallery-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 12px;
+        }
+        .gallery-thumbs-row {
+          display: none !important;
+        }
+      }
+
+      @media (max-width: 600px) {
+        #complex-invest .card-list {
+          gap: 12px;
+          flex-direction: column;
+          align-items: stretch;
+          padding: 0;
+        }
+        #complex-invest .card {
+          width: 100%;
+          min-width: 0;
+          max-width: 100%;
+          min-height: 80px;
+          height: auto;
+          border-radius: 12px;
+          padding: 16px 18px 16px 16px;
+          font-size: 15px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+          box-sizing: border-box;
+          position: relative;
+          background: #fff;
+          word-break: break-word;
+        }
+        #complex-invest .invest-card-row {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+        }
+        #complex-invest .invest-card-img {
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          min-height: 32px;
+          margin: 0 !important;
+          object-fit: contain;
+          flex-shrink: 0;
+          display: block;
+          align-self: flex-start;
+        }
+        #complex-invest .invest-card-title {
+          font-size: 20px;
+          font-weight: 400;
+          color: #111;
+          margin: 0;
+          line-height: 1;
+          letter-spacing: -0.04em;
+          text-align: left;
+          display: block;
+          margin-bottom: 14px;
+        }
+        #complex-invest .invest-card-caption {
+          font-size: 14px;
+          color: #444;
+          line-height: 1;
+          font-weight: 400;
+          margin: 0;
+          text-align: left;
+          display: block;
+          margin-left: 53px; /* Отступ для выравнивания с картинкой */
+        }
+        #complex-invest .invest-card-text {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          min-width: 0;
+          width: 100%;
+          gap: 4px;
+        }
+        /* Если .invest-card-title и .invest-card-caption идут подряд без .invest-card-text, выстроить их в column */
+        #complex-invest .card > .invest-card-title + .invest-card-caption {
+          display: block;
+        }
+      }
+
+      /* --- Custom Gallery Styles --- */
+      .custom-gallery-square {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .gallery-main {
+        position: relative;
+        background: #fff;
+        border-radius: 24px;
+        width: 500px;
+        height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .gallery-image-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .gallery-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 24px;
+        transition: opacity 0.3s;
+        background: #f6f6f6;
+      }
+      .gallery-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        opacity: 0.92;
+        transition: opacity 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+      }
+      .gallery-arrow.left {
+        left: 16px;
+      }
+      .gallery-arrow.right {
+        right: 16px;
+      }
+      .gallery-arrow svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .gallery-arrow:hover {
+        opacity: 1;
+      }
+      .gallery-thumbs-row {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        justify-content: flex-start;
+        align-items: flex-end;
+        margin-top: 25px;
+        max-width: 500px;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-wrap: nowrap;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .gallery-thumbs-row::-webkit-scrollbar {
+        display: none;
+      }
+      .gallery-thumb {
+        width: 75px;
+        height: 75px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        opacity: 0.7;
+        border: 2.5px solid transparent;
+        transition: opacity 0.2s, border 0.2s, box-shadow 0.2s;
+        background: #fff;
+        flex: 0 0 auto;
+      }
+      .gallery-thumb.active {
+        opacity: 1;
+        border: 2.5px solid #7ba6cc;
+      }
+      .gallery-thumb:hover {
+        opacity: 1;
+        border: 2.5px solid #b3cbe6;
+      }
+      @media (max-width: 600px) {
+        .custom-gallery-square {
+          width: 100vw;
+          max-width: 100vw;
+          box-sizing: border-box;
+          padding: 0;
+          margin: 0;
+        }
+        .gallery-main {
+          width: 100% !important;
+          height: 100% !important;
+          aspect-ratio: 1 / 1 !important;
+          min-width: 0;
+          min-height: 0;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          box-sizing: border-box;
+          margin: 0;
+        }
+        .gallery-image-wrapper {
+          width: 100%;
+          height: 100%;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .gallery-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 12px;
+        }
+        .gallery-thumbs-row {
+          display: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+  <div id="complex-page">
+  <div id="complex-header">
+      <div class="complex-header-inner">
+        <div class="text">
+          <button id="back-button" onclick="history.back()">← на главную</button>
+          <h1>Счастье в Казани</h1>
+          <p>Сочетание урбанистической жизни и природной красоты</p>
+        </div>
+        <div class="price-box">
+          <div class="price-info">
+            <div>
+              <span>Стоимость</span>
+              <span id="complex-header-price-placeholder"></span>
+            </div>
+            <!-- <div>
+              <span>Площадь</span>
+              <span class="area-number">26.0 – 63.1 м²</span>
+            </div> -->
+          </div>
+          <button id="consultation-button">Получить консультацию</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section grid-2" id="complex-about">
+      <div class="about-img-wrapper">
+        <img src="building.jpg" alt="Жилой комплекс">
+        <div class="about-overlay-card">
+          <div class="about-overlay-row">
+            <img class="about-overlay-icon" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/safety.png" alt="Безопасная сделка">
+            <div class="about-overlay-title">Безопасная сделка<br>по ФЗ-214</div>
+          </div>
+          <div class="about-overlay-caption">Защищайте свои права как покупателя<br>и исключите возможные риски при<br>покупке жилья</div>
+        </div>
+      </div>
+      <div class="about-text">
+        <h2>О комплексе</h2>
+        <p id="complex-about-text"></p>
+        <div id="complex-charcs-placeholder"></div>
+      </div>
+    </div>
+    </div>
+
+    <div class="section grid-2" id="complex-comfort">
+      <div>
+        <h2>Комфортные условия жилого комплекса</h2>
+        <div class="card-list">
+          <div class="card"><span class="comfort-dot"></span><span class="card-desc">Собственный парк и река внутри города</span></div>
+          <div class="card"><span class="comfort-dot"></span><span class="card-desc">Собственный парк и река внутри города</span></div>
+          <div class="card"><span class="comfort-dot"></span><span class="card-desc">Собственный парк и река внутри города</span></div>
+          <div class="card"><span class="comfort-dot"></span><span class="card-desc">Собственный парк и река внутри города</span></div>
+        </div>
+      </div>
+      <div style="width:100%;display:flex;justify-content:center;box-sizing:border-box;overflow:hidden;">
+        <div id="complex-comfort-gallery-placeholder" style="width:100%;max-width:500px;margin:0 auto;box-sizing:border-box;"></div>
+      </div>
+    </div>
+    <div class="section" id="complex-invest">
+      <h2>Условия сделки и инвестиционный потенциал</h2>
+        <div class="card-list">
+          <div class="card">
+            <div class="invest-card-row">
+              <img class="invest-card-img" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/comfort.png" alt="">
+              <div class="invest-card-title">30% прирост<br>с момента старта</div>
+            </div>
+            <div class="invest-card-caption">Регулярное ежемесячное<br>повышение цен</div>
+          </div>
+          <div class="card">
+            <div class="invest-card-row">
+              <img class="invest-card-img" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/comfort.png" alt="">
+              <div class="invest-card-title">Покупка в ипотеку</div>
+            </div>
+            <div class="invest-card-caption">Семейная ипотека.<br>Траншевая ипотека – 1₽ в месяц.</div>
+          </div>
+          <div class="card">
+            <div class="invest-card-row">
+              <img class="invest-card-img" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/comfort.png" alt="">
+              <div class="invest-card-title">Рассрочка<br>от застройщика</div>
+            </div>
+            <div class="invest-card-caption">От 10% первого взноса.<br>3 варианта рассрочки.</div>
+          </div>
+          <div class="card">
+            <div class="invest-card-row">
+              <img class="invest-card-img" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/comfort.png" alt="">
+              <div class="invest-card-title">Безопасная<br>сделка по ФЗ-214</div>
+            </div>
+            <div class="invest-card-caption">Договор долевого участия<br>с полной суммой на эскроу счете.</div>
+          </div>
+        </div>
+    </div>
+
+    <div class="form-section" id="complex-form">
+      <img class="form-section-bgimg" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/expanded_background_updated.png" alt="" draggable="false" />
+      <div class="form-inner">
+        <div class="form-caption">Свяжитесь с нами</div>
+        <h2>Оставьте заявку<br>на подбор квартиры</h2>
+        <div class="form-caption form-caption-large">
+          Получите лучшие доступные предложения с актуальными ценами, акциями и условиями покупки
+        </div>
+        <form id="complex-form-form">
+          <div class="complex-form-fields">
+            <div>
+              <label>Бюджет</label>
+              <select name="budget" required>
+                <option value="" disabled selected hidden data-mobile="Выбрать">Выберите бюджет</option>
+                <option>до 10 млн.</option>
+                <option>до 12 млн.</option>
+                <option>от 12 до 15 млн.</option>
+                <option>от 15 до 20 млн.</option>
+                <option>от 20 млн. и более</option>
+              </select>
+            </div>
+            <div>
+              <label>Планировка</label>
+              <select name="plan" required>
+                <option value="" disabled selected hidden data-mobile="Выбрать">Выберите планировку</option>
+                <option>Студия</option>
+                <option>1-комн.</option>
+                <option>2-комн.</option>
+                <option>3-комн.</option>
+                <option>4+ комн.</option>
+                <option>Рассматриваю варианты</option>
+              </select>
+            </div>
+            <div class="fullwidth">
+              <input type="text" name="name" placeholder="Имя" required>
+            </div>
+            <div class="fullwidth">
+              <input type="tel" name="phone" id="complex-form-phone" placeholder="Телефон" autocomplete="tel" inputmode="tel" pattern="\+7 \([0-9]{3}\) [0-9]{3}-[0-9]{2}-[0-9]{2}" required>
+            </div>
+          </div>
+          <div class="complex-form-submit">
+            <button type="submit" id="complex-form-submit-btn">Оставить заявку</button>
+          </div>
+          <div class="complex-form-note">
+            Нажимая на кнопку «Оставить заявку» вы соглашаетесь на обработку персональных данных в соответствии с условиями политики конфиденциальности
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+    <script>
+      // Мобильная версия: меняем placeholder в option на "Выбрать"
+      function updateMobileSelectPlaceholders() {
+        if (window.innerWidth <= 600) {
+          document.querySelectorAll('select option[data-mobile]').forEach(function(opt) {
+            opt.textContent = opt.getAttribute('data-mobile');
+          });
+        } else {
+          document.querySelectorAll('select option[data-mobile]').forEach(function(opt) {
+            if (opt.parentElement.name === 'budget') opt.textContent = 'Выберите бюджет';
+            if (opt.parentElement.name === 'plan') opt.textContent = 'Выберите планировку';
+          });
+        }
+      }
+      window.addEventListener('DOMContentLoaded', updateMobileSelectPlaceholders);
+      window.addEventListener('resize', updateMobileSelectPlaceholders);
+      // Скрытие элементов на всех страницах, кроме тех, где URL содержит 'tproduct'
+      if (!window.location.href.includes('tproduct')) {
+        const elementsToHide = [
+          document.getElementById("complex-header"),
+          document.getElementById("complex-about"),
+          document.getElementById("complex-comfort"),
+          document.getElementById("complex-invest"),
+          document.getElementById("complex-form")
+        ];
+        elementsToHide.forEach(el => {
+          if (el) el.style.display = "none";
         });
       }
-      // Трансформируем цену перед подстановкой
-      transformProductPrices();
-      // Подстановка описания ЖК
-      const sourceDesc = document.querySelector("div.js-store-prod-all-text");
-      const targetDesc = document.querySelector("#complex-about-text");
-      if (sourceDesc && targetDesc) {
-        targetDesc.innerHTML = sourceDesc.innerHTML;
+
+      // Функция установки фонового изображения (ищет любой t-slds__bgimg.t-bgimg.js-product-img)
+      function setHeaderBackgroundFromAnyImg() {
+        // 1. Пробуем найти любой div с data-original (даже если не loaded)
+        let bgDiv = document.querySelector("div.t-slds__bgimg.t-bgimg.js-product-img[data-original]");
+        if (!bgDiv) {
+          // 2. Если не найден, ищем loaded
+          bgDiv = document.querySelector("div.t-slds__bgimg.t-bgimg.loaded[data-original]");
+        }
+        if (bgDiv) {
+          const imageUrl = bgDiv.dataset.original || bgDiv.style.backgroundImage.replace(/url\(["']?|["']?\)/g, '');
+          if (imageUrl) {
+            document.getElementById('complex-header').style.backgroundImage = `url('${imageUrl}')`;
+            return true;
+          }
+        }
+        return false;
       }
-      // Перемещение блока характеристик под описанием
-      function moveCharcsWithRetry(retries = 20) {
-        const allCharcs = Array.from(document.querySelectorAll("div.js-store-prod-all-charcs"));
-        const targetCharcs = document.querySelector("#complex-charcs-placeholder");
-        if (allCharcs.length > 0 && targetCharcs) {
-          // Найти тот, который НЕ внутри placeholder
-          const sourceCharcs = allCharcs.find(el => !targetCharcs.contains(el));
-          if (sourceCharcs) {
-            targetCharcs.innerHTML = '';
-            targetCharcs.appendChild(sourceCharcs);
-            groupCharacteristics();
+
+      // Новая функция для установки фонового изображения и картинки about
+      function setHeaderAndAboutImagesFromBullets() {
+        // Найти thumb с data-slide-bullet-for="1"
+        const bullet1 = document.querySelector('.t-slds__thumbsbullet[data-slide-bullet-for="1"] .t-slds__bgimg[data-original]');
+        const bullet2 = document.querySelector('.t-slds__thumbsbullet[data-slide-bullet-for="2"] .t-slds__bgimg[data-original]');
+        // Фон complex-header
+        if (bullet1) {
+          const url1 = bullet1.getAttribute('data-original');
+          if (url1) {
+            document.getElementById('complex-header').style.backgroundImage = `url('${url1}')`;
+          }
+        }
+        // Левая картинка complex-about
+        if (bullet2) {
+          const url2 = bullet2.getAttribute('data-original');
+          const aboutImg = document.querySelector('#complex-about img');
+          if (aboutImg && url2) {
+            aboutImg.src = url2;
+          }
+        }
+        return !!(bullet1 || bullet2);
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        /** 1. Преобразование цены в «от X.X млн.» и класс price-millions */
+        function transformProductPrices() {
+          document.querySelectorAll('.js-product-price[data-product-price-def-str]').forEach(function(el) {
+            var raw = el.getAttribute('data-product-price-def-str') || '';
+            var value = parseInt(raw.replace(/\D/g, ''), 10);
+            if (isNaN(value)) return;
+            var formatted = 'от ' + (value / 1e6).toFixed(1) + ' млн';
+            if (el.textContent.trim() !== formatted) {
+              el.textContent = formatted;
+              el.classList.add('price-millions');
+            }
+          });
+        }
+        // Трансформируем цену перед подстановкой
+        transformProductPrices();
+        // Подстановка описания ЖК
+        const sourceDesc = document.querySelector("div.js-store-prod-all-text");
+        const targetDesc = document.querySelector("#complex-about-text");
+        if (sourceDesc && targetDesc) {
+          targetDesc.innerHTML = sourceDesc.innerHTML;
+        }
+        // Перемещение блока характеристик под описанием
+        function moveCharcsWithRetry(retries = 20) {
+          const allCharcs = Array.from(document.querySelectorAll("div.js-store-prod-all-charcs"));
+          const targetCharcs = document.querySelector("#complex-charcs-placeholder");
+          if (allCharcs.length > 0 && targetCharcs) {
+            // Найти тот, который НЕ внутри placeholder
+            const sourceCharcs = allCharcs.find(el => !targetCharcs.contains(el));
+            if (sourceCharcs) {
+              targetCharcs.innerHTML = '';
+              targetCharcs.appendChild(sourceCharcs);
+              groupCharacteristics();
+              return;
+            }
+          }
+          if (retries > 0) {
+            setTimeout(() => moveCharcsWithRetry(retries - 1), 500);
+          }
+        }
+        setTimeout(moveCharcsWithRetry, 500);
+
+        // Группировка повторяющихся характеристик и новая вёрстка
+        function groupCharacteristics() {
+          var container = document.querySelector('#complex-charcs-placeholder');
+          if (!container) return;
+          var items = Array.from(
+            container.querySelectorAll('p.t-typography__characteristics.js-store-prod-charcs')
+          );
+          if (items.length === 0) return;
+          var map = {}, order = [];
+          items.forEach(function(p) {
+            var txt = p.textContent.trim();
+            var idx = txt.indexOf(':');
+            if (idx < 0) return;
+            var key = txt.slice(0, idx).trim();
+            var val = txt.slice(idx + 1).trim();
+            if (!map[key]) {
+              map[key] = new Set();
+              order.push(key);
+            }
+            map[key].add(val);
+          });
+          if (items.length <= order.length) return;
+          items.forEach(function(p) { p.remove(); });
+          order.forEach(function(key) {
+            var vals = Array.from(map[key]);
+            var p = document.createElement('p');
+            p.className = 't-typography__characteristics js-store-prod-charcs';
+            var keySpan = document.createElement('span');
+            keySpan.className = 'char-key';
+            keySpan.textContent = key + ':';
+            var valSpan = document.createElement('span');
+            valSpan.className = 'char-value';
+            // --- Разделяем по запятым и добавляем переносы строк ---
+            var parts = vals.join(', ').split(/,\s*/);
+            // Для каждого значения создаём span с white-space:nowrap, чтобы не переносилось по словам
+            valSpan.innerHTML = parts.map(function(part, i) {
+              return (i > 0 ? ', ' : '') + '<span class="char-obj">' + part + '</span>';
+            }).join('');
+        // Гарантируем перенос после запятой и пробела в мобильной версии
+        var style = document.createElement('style');
+        style.innerHTML = `
+          #complex-charcs-placeholder .char-value .char-obj {
+            white-space: nowrap;
+            display: inline-block;
+          }
+          @media (max-width:600px){
+            #complex-charcs-placeholder .char-value {
+              word-break: normal !important;
+              overflow-wrap: normal !important;
+              white-space: normal !important;
+            }
+            #complex-charcs-placeholder .char-value .char-obj {
+              white-space: nowrap;
+              display: inline-block;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+            p.appendChild(keySpan);
+            p.appendChild(valSpan);
+            container.appendChild(p);
+          });
+        }
+
+        // Следим за динамическими изменениями характеристик
+        var charcsObserver = new MutationObserver(function() {
+          groupCharacteristics();
+        });
+        charcsObserver.observe(document.getElementById('complex-charcs-placeholder'), { childList: true, subtree: true });
+
+        // Подстановка названия ЖК
+        const sourceTitle = document.querySelector("h1.js-store-prod-name.js-product-name.t-store__prod-popup__name.t-name.t-name_xl");
+        const targetTitle = document.querySelector("#complex-header .complex-header-inner .text h1");
+        if (sourceTitle && targetTitle) {
+          targetTitle.textContent = sourceTitle.textContent;
+        }
+        // Подстановка главного изображения комплекса
+        const sourceImgDiv = document.querySelector('div.t-slds__bgimg.t-bgimg.js-product-img.loaded');
+        const targetImg = document.querySelector('#complex-about img');
+        if (sourceImgDiv && targetImg) {
+          const imgUrl = sourceImgDiv.dataset.original ||
+            sourceImgDiv.style.backgroundImage.replace(/url\(["']?|["']?\)/g, '');
+          targetImg.src = imgUrl;
+        }
+        // Подстановка цены с вычислением из data-атрибута из data-атрибута
+        const sourceEl = document.querySelector('.js-product-price.js-store-prod-price-val');
+        const targetPrice = document.querySelector('.price-number');
+        if (sourceEl && targetPrice) {
+          const raw = sourceEl.getAttribute('data-product-price-def-str') || '';
+          const num = parseInt(raw.replace(/\D/g, ''), 10);
+          if (!isNaN(num)) {
+            const mln = num / 1000000;
+            const display = (mln % 1 === 0) ? mln.toString() : mln.toFixed(1);
+              targetPrice.textContent = 'от ' + display + ' млн';
+              targetPrice.classList.add('price-millions');
+            }
+          }
+
+        // Перемещение галереи в блок complex-comfort
+        function moveGalleryWithRetry(retries = 20) {
+          const gallery = document.querySelector("div.t-store__prod-popup__slider.js-store-prod-slider.t-store__prod-popup__col-left.t-col.t-col_6");
+          const target = document.getElementById("complex-comfort-gallery-placeholder");
+          if (gallery && target && !target.contains(gallery)) {
+            // Просто перемещаем галерею (appendChild), не клонируем и не удаляем
+            target.innerHTML = '';
+            target.appendChild(gallery);
+            // Триггерим событие для повторной инициализации слайдера
+            var event = document.createEvent('Event');
+            event.initEvent('tilda:resizedone', true, true);
+            window.dispatchEvent(event);
+            var reinitEvent = document.createEvent('Event');
+            reinitEvent.initEvent('tilda:featherslider:reinit', true, true);
+            window.dispatchEvent(reinitEvent);
+            // Вызов обеих функций инициализации, если они есть
+            if (typeof window.t_slds !== 'undefined' && typeof window.t_slds.init === 'function') {
+              window.t_slds.init();
+            }
+            if (typeof window.t_slds_init === 'function') {
+              window.t_slds_init();
+            }
+            // Иногда требуется повторно вызвать инициализацию через setTimeout
+            setTimeout(function() {
+              if (typeof window.t_slds !== 'undefined' && typeof window.t_slds.init === 'function') {
+                window.t_slds.init();
+              }
+              if (typeof window.t_slds_init === 'function') {
+                window.t_slds_init();
+              }
+            }, 500);
             return;
           }
-        }
-        if (retries > 0) {
-          setTimeout(() => moveCharcsWithRetry(retries - 1), 500);
-        }
-      }
-      setTimeout(moveCharcsWithRetry, 500);
-
-      // Группировка повторяющихся характеристик и новая вёрстка
-      function groupCharacteristics() {
-        var container = document.querySelector('#complex-charcs-placeholder');
-        if (!container) return;
-        var items = Array.from(
-          container.querySelectorAll('p.t-typography__characteristics.js-store-prod-charcs')
-        );
-        if (items.length === 0) return;
-        var map = {}, order = [];
-        items.forEach(function(p) {
-          var txt = p.textContent.trim();
-          var idx = txt.indexOf(':');
-          if (idx < 0) return;
-          var key = txt.slice(0, idx).trim();
-          var val = txt.slice(idx + 1).trim();
-          if (!map[key]) {
-            map[key] = new Set();
-            order.push(key);
+          if (retries > 0) {
+            setTimeout(() => moveGalleryWithRetry(retries - 1), 500);
           }
-          map[key].add(val);
+        }
+        setTimeout(moveGalleryWithRetry, 500);
+
+        // --- Новый механизм подстановки фоновых и about-изображений ---
+        if (!setHeaderAndAboutImagesFromBullets()) {
+          let applied = false;
+          const interval = setInterval(() => {
+            if (setHeaderAndAboutImagesFromBullets()) {
+              applied = true;
+              clearInterval(interval);
+            }
+          }, 300);
+          setTimeout(() => { if (!applied) clearInterval(interval); }, 30000);
+        }
+
+        // Применяем фон сразу, если возможно, иначе запускаем setInterval
+        if (!setHeaderBackgroundFromAnyImg()) {
+          let applied = false;
+          const interval = setInterval(() => {
+            if (setHeaderBackgroundFromAnyImg()) {
+              applied = true;
+              clearInterval(interval);
+            }
+          }, 300);
+          setTimeout(() => { if (!applied) clearInterval(interval); }, 30000);
+        }
+
+        // === Перемещение и преобразование цены в complex-header по референсу ===
+        function moveAndTransformPriceWithRetry(retries = 20) {
+          var pricePlaceholder = document.getElementById('complex-header-price-placeholder');
+          if (!pricePlaceholder) return;
+          var priceEl = document.querySelector('.js-product-price[data-product-price-def-str]:not([data-moved])');
+          if (priceEl) {
+            priceEl.setAttribute('data-moved', 'true');
+            pricePlaceholder.innerHTML = '';
+            pricePlaceholder.appendChild(priceEl);
+          }
+          transformHeaderPrice();
+          if (!priceEl && retries > 0) {
+            setTimeout(() => moveAndTransformPriceWithRetry(retries - 1), 500);
+          }
+        }
+        function transformHeaderPrice() {
+          var priceEl = document.querySelector('#complex-header-price-placeholder .js-product-price[data-product-price-def-str]');
+          if (!priceEl) return;
+          if (!priceEl.hasAttribute('data-price-processed')) {
+            var priceStr = priceEl.getAttribute('data-product-price-def-str');
+            var price = parseInt(priceStr, 10);
+            if (!isNaN(price)) {
+              var millions = (price / 1000000).toFixed(1);
+              priceEl.textContent = 'от ' + millions + ' млн.';
+              priceEl.setAttribute('data-price-processed', '1');
+            }
+          }
+        }
+        setTimeout(moveAndTransformPriceWithRetry, 500);
+
+        // MutationObserver для динамических изменений (только для complex-header)
+        var priceObserver = new MutationObserver(function() {
+          transformHeaderPrice();
         });
-        if (items.length <= order.length) return;
-        items.forEach(function(p) { p.remove(); });
-        order.forEach(function(key) {
-          var vals = Array.from(map[key]);
-          var p = document.createElement('p');
-          p.className = 't-typography__characteristics js-store-prod-charcs';
-          var keySpan = document.createElement('span');
-          keySpan.className = 'char-key';
-          keySpan.textContent = key + ':';
-          var valSpan = document.createElement('span');
-          valSpan.className = 'char-value';
-          valSpan.textContent = vals.join(', ');
-          p.appendChild(keySpan);
-          p.appendChild(valSpan);
-          container.appendChild(p);
-        });
-      }
-
-      // Следим за динамическими изменениями характеристик
-      var charcsObserver = new MutationObserver(function() {
-        groupCharacteristics();
-      });
-      charcsObserver.observe(document.getElementById('complex-charcs-placeholder'), { childList: true, subtree: true });
-
-      // Подстановка названия ЖК
-      const sourceTitle = document.querySelector("h1.js-store-prod-name.js-product-name.t-store__prod-popup__name.t-name.t-name_xl");
-      const targetTitle = document.querySelector("#complex-header .complex-header-inner .text h1");
-      if (sourceTitle && targetTitle) {
-        targetTitle.textContent = sourceTitle.textContent;
-      }
-      // Подстановка главного изображения комплекса
-      const sourceImgDiv = document.querySelector('div.t-slds__bgimg.t-bgimg.js-product-img.loaded');
-      const targetImg = document.querySelector('#complex-about img');
-      if (sourceImgDiv && targetImg) {
-        const imgUrl = sourceImgDiv.dataset.original ||
-          sourceImgDiv.style.backgroundImage.replace(/url\(["']?|["']?\)/g, '');
-        targetImg.src = imgUrl;
-      }
-      // Подстановка цены с вычислением из data-атрибута из data-атрибута
-      const sourceEl = document.querySelector('.js-product-price.js-store-prod-price-val');
-      const targetPrice = document.querySelector('.price-number');
-      if (sourceEl && targetPrice) {
-        const raw = sourceEl.getAttribute('data-product-price-def-str') || '';
-        const num = parseInt(raw.replace(/\D/g, ''), 10);
-        if (!isNaN(num)) {
-          const mln = num / 1000000;
-          const display = (mln % 1 === 0) ? mln.toString() : mln.toFixed(1);
-            targetPrice.textContent = 'от ' + display + ' млн';
-            targetPrice.classList.add('price-millions');
-          }
-        }
-
-      // Перемещение галереи в блок complex-comfort
-      function moveGalleryWithRetry(retries = 20) {
-        const gallery = document.querySelector("div.t-store__prod-popup__slider.js-store-prod-slider.t-store__prod-popup__col-left.t-col.t-col_6");
-        const target = document.getElementById("complex-comfort-gallery-placeholder");
-        if (gallery && target && !target.contains(gallery)) {
-          target.innerHTML = '';
-          target.appendChild(gallery);
-          // Триггерим событие для повторной инициализации слайдера
-          var event = document.createEvent('Event');
-          event.initEvent('tilda:resizedone', true, true);
-          window.dispatchEvent(event);
-          return;
-        }
-        if (retries > 0) {
-          setTimeout(() => moveGalleryWithRetry(retries - 1), 500);
-        }
-      }
-      setTimeout(moveGalleryWithRetry, 500);
-
-      // --- Новый механизм подстановки фоновых и about-изображений ---
-      if (!setHeaderAndAboutImagesFromBullets()) {
-        let applied = false;
-        const interval = setInterval(() => {
-          if (setHeaderAndAboutImagesFromBullets()) {
-            applied = true;
-            clearInterval(interval);
-          }
-        }, 300);
-        setTimeout(() => { if (!applied) clearInterval(interval); }, 30000);
-      }
-
-      // Применяем фон сразу, если возможно, иначе запускаем setInterval
-      if (!setHeaderBackgroundFromAnyImg()) {
-        let applied = false;
-        const interval = setInterval(() => {
-          if (setHeaderBackgroundFromAnyImg()) {
-            applied = true;
-            clearInterval(interval);
-          }
-        }, 300);
-        setTimeout(() => { if (!applied) clearInterval(interval); }, 30000);
-      }
-
-      // === Перемещение и преобразование цены в complex-header по референсу ===
-      function moveAndTransformPriceWithRetry(retries = 20) {
         var pricePlaceholder = document.getElementById('complex-header-price-placeholder');
-        if (!pricePlaceholder) return;
-        var priceEl = document.querySelector('.js-product-price[data-product-price-def-str]:not([data-moved])');
-        if (priceEl) {
-          priceEl.setAttribute('data-moved', 'true');
-          pricePlaceholder.innerHTML = '';
-          pricePlaceholder.appendChild(priceEl);
+        if (pricePlaceholder) {
+          priceObserver.observe(pricePlaceholder, { childList: true, subtree: true });
         }
-        transformHeaderPrice();
-        if (!priceEl && retries > 0) {
-          setTimeout(() => moveAndTransformPriceWithRetry(retries - 1), 500);
-        }
-      }
-      function transformHeaderPrice() {
-        var priceEl = document.querySelector('#complex-header-price-placeholder .js-product-price[data-product-price-def-str]');
-        if (!priceEl) return;
-        if (!priceEl.hasAttribute('data-price-processed')) {
-          var priceStr = priceEl.getAttribute('data-product-price-def-str');
-          var price = parseInt(priceStr, 10);
-          if (!isNaN(price)) {
-            var millions = (price / 1000000).toFixed(1);
-            priceEl.textContent = 'от ' + millions + ' млн.';
-            priceEl.setAttribute('data-price-processed', '1');
-          }
-        }
-      }
-      setTimeout(moveAndTransformPriceWithRetry, 500);
 
-      // MutationObserver для динамических изменений (только для complex-header)
-      var priceObserver = new MutationObserver(function() {
-        transformHeaderPrice();
-      });
-      var pricePlaceholder = document.getElementById('complex-header-price-placeholder');
-      if (pricePlaceholder) {
-        priceObserver.observe(pricePlaceholder, { childList: true, subtree: true });
-      }
-
-      // Кнопка "Оставить заявку" - анимация после отправки
-      var form = document.getElementById('complex-form-form');
-      var btn = document.getElementById('complex-form-submit-btn');
-      if (form && btn) {
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-          btn.classList.add('submitted');
-          btn.textContent = 'Заявка получена ✓';
-        });
-      }
-
-      // Маска для телефона: +7 (___) ___-__-__
-      var phoneInput = document.getElementById('complex-form-phone');
-      if (phoneInput) {
-        phoneInput.addEventListener('input', function(e) {
-          let value = phoneInput.value.replace(/\D/g, '');
-          if (value.startsWith('8')) value = value.slice(1);
-          if (value.startsWith('7')) value = value.slice(1);
-          value = value.slice(0, 10); // только 10 цифр после +7
-
-          let formatted = '+7';
-          if (value.length > 0) formatted += ' (' + value.substring(0, 3);
-          if (value.length >= 4) formatted += ') ' + value.substring(3, 6);
-          if (value.length >= 7) formatted += '-' + value.substring(6, 8);
-          if (value.length >= 9) formatted += '-' + value.substring(8, 10);
-
-          // Добавить закрывающую скобку если пользователь ввел 3 цифры кода
-          if (value.length > 0 && value.length < 4) formatted += '';
-          if (value.length >= 4) formatted = formatted.replace('(', '(').replace(')', ')');
-
-          phoneInput.value = formatted;
-        });
-
-        // Блокировать ввод не-цифр (разрешить только цифры, backspace, стрелки)
-        phoneInput.addEventListener('keydown', function(e) {
-          // Разрешить служебные клавиши
-          if (
-            e.key === "Backspace" ||
-            e.key === "Delete" ||
-            e.key === "ArrowLeft" ||
-            e.key === "ArrowRight" ||
-            e.key === "Tab"
-          ) return;
-          // Разрешить только цифры
-          if (!/\d/.test(e.key)) {
+        // Кнопка "Оставить заявку" - анимация после отправки
+        var form = document.getElementById('complex-form-form');
+        var btn = document.getElementById('complex-form-submit-btn');
+        if (form && btn) {
+          form.addEventListener('submit', async function(e) {
             e.preventDefault();
+            btn.disabled = true;
+            btn.classList.remove('submitted');
+            btn.textContent = 'Отправка...';
+            // Валидация
+            var data = new FormData(form);
+            var name = data.get('name')?.trim();
+            var phone = data.get('phone')?.trim();
+            var budget = data.get('budget');
+            var plan = data.get('plan');
+            if (!name || !phone || !budget || !plan) {
+              btn.textContent = 'Заполните все поля';
+              btn.disabled = false;
+              return;
+            }
+            // UID из URL
+            var uid = '';
+            var match = window.location.href.match(/tproduct\/(\d+)/);
+            if (match) uid = match[1];
+            // Получаем название ЖК
+            var complexName = '';
+            var h1 = document.querySelector('#complex-header .complex-header-inner .text h1');
+            if (h1) complexName = h1.textContent.trim();
+            // Получаем полный URL
+            var pageUrl = window.location.href;
+            // Сообщение для Telegram (формируем строку, потом кодируем целиком)
+            var msg =
+              '<b>Новая заявка с формы ЖК</b>\n' +
+              '<b>ЖК:</b> ' + complexName + '\n' +
+              '<b>Имя:</b> ' + name + '\n' +
+              '<b>Телефон:</b> ' + phone + '\n' +
+              '<b>Бюджет:</b> ' + budget + '\n' +
+              '<b>Планировка:</b> ' + plan + '\n' +
+              '<b>URL:</b> ' + pageUrl;
+            var encodedMsg = encodeURIComponent(msg);
+            // Telegram API
+            var chat_id = '478333096';
+            var token = '7872379021:AAEHs-lg27Ldgsjg91lrlNTHCTCwdoXlInI';
+            var url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat_id}&parse_mode=HTML&text=${encodedMsg}`;
+            try {
+              var resp = await fetch(url);
+              if (resp.ok) {
+                btn.classList.add('submitted');
+                btn.textContent = 'Заявка получена ✓';
+                form.reset();
+              } else {
+                btn.textContent = 'Ошибка отправки';
+              }
+            } catch (err) {
+              btn.textContent = 'Ошибка сети';
+            }
+            setTimeout(function() {
+              btn.disabled = false;
+              btn.classList.remove('submitted');
+              btn.textContent = 'Оставить заявку';
+            }, 3500);
+          });
+        }
+
+        // Маска для телефона: +7 (___) ___-__-__
+        var phoneInput = document.getElementById('complex-form-phone');
+        if (phoneInput) {
+          phoneInput.addEventListener('input', function(e) {
+            let value = phoneInput.value.replace(/\D/g, '');
+            if (value.startsWith('8')) value = value.slice(1);
+            if (value.startsWith('7')) value = value.slice(1);
+            value = value.slice(0, 10); // только 10 цифр после +7
+
+            let formatted = '+7';
+            if (value.length > 0) formatted += ' (' + value.substring(0, 3);
+            if (value.length >= 4) formatted += ') ' + value.substring(3, 6);
+            if (value.length >= 7) formatted += '-' + value.substring(6, 8);
+            if (value.length >= 9) formatted += '-' + value.substring(8, 10);
+
+            // Добавить закрывающую скобку если пользователь ввел 3 цифры кода
+            if (value.length > 0 && value.length < 4) formatted += '';
+            if (value.length >= 4) formatted = formatted.replace('(', '(').replace(')', ')');
+
+            phoneInput.value = formatted;
+          });
+
+          // Блокировать ввод не-цифр (разрешить только цифры, backspace, стрелки)
+          phoneInput.addEventListener('keydown', function(e) {
+            // Разрешить служебные клавиши
+            if (
+              e.key === "Backspace" ||
+              e.key === "Delete" ||
+              e.key === "ArrowLeft" ||
+              e.key === "ArrowRight" ||
+              e.key === "Tab"
+            ) return;
+            // Разрешить только цифры
+            if (!/\d/.test(e.key)) {
+              e.preventDefault();
+            }
+          });
+        }
+
+        // === Перенос преимуществ из таба в карточки complex-comfort ===
+        function fillComfortCardsFromTabs() {
+          // Найти активный таб с data-tab-title="Преимущества"
+          var tabItem = document.querySelector('.t-store__tabs__item[data-tab-title="Преимущества"] .t-store__tabs__content');
+          var cardList = document.querySelector('#complex-comfort .card-list');
+          if (tabItem && cardList) {
+            var html = tabItem.innerHTML;
+            // Разбить по <br> или по \n (на случай разных вариантов)
+            var lines = html.split(/<br\s*\/?\s*>|\n/).map(function(line) {
+              return line.replace(/<[^>]+>/g, '').trim();
+            }).filter(function(line) { return line.length > 0; });
+            if (lines.length > 0) {
+              cardList.innerHTML = '';
+              lines.forEach(function(line) {
+                var card = document.createElement('div');
+                card.className = 'card';
+                var dot = document.createElement('span');
+                dot.className = 'comfort-dot';
+                card.appendChild(dot);
+                card.appendChild(document.createTextNode(line));
+                cardList.appendChild(card);
+              });
+            }
           }
-        });
-      }
-    });
-  </script>
-</body>
-</html>
+        }
+        // Запустить после загрузки DOM и через небольшой таймаут (на случай динамической подгрузки)
+        setTimeout(fillComfortCardsFromTabs, 500);
+
+        // Кастомная галерея вместо тильдовской
+        function buildCustomGalleryFromTilda() {
+          const tildaImgs = Array.from(document.querySelectorAll('.t-slds__bgimg.t-bgimg[data-original]'));
+          // Убираем дублирующиеся ссылки
+          const seen = new Set();
+          const images = tildaImgs
+            .map(img => img.getAttribute('data-original'))
+            .filter(src => src && !seen.has(src) && seen.add(src));
+          const target = document.getElementById('complex-comfort-gallery-placeholder');
+          if (!target || images.length === 0) return;
+          // Верстка галереи: квадратное изображение, миниатюры снизу 78x78
+          target.innerHTML = `
+            <div class="custom-gallery-square">
+              <div class="gallery-main">
+                <button class="gallery-arrow left" aria-label="Назад"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#fff"/><path d="M28 16L20 24L28 32" stroke="#222" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <div class="gallery-image-wrapper">
+                  <img class="gallery-image" src="${images[0]}" alt="Фото ЖК" />
+                </div>
+                <button class="gallery-arrow right" aria-label="Вперед"><svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="24" fill="#fff"/><path d="M20 16L28 24L20 32" stroke="#222" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+              <div class="gallery-thumbs-row">
+                ${images.map((src, i) => `<img class="gallery-thumb${i === 0 ? ' active' : ''}" src="${src}" data-idx="${i}" alt="Миниатюра">`).join('')}
+              </div>
+            </div>
+          `;
+          // Логика навигации
+          let current = 0;
+          const imgEl = target.querySelector('.gallery-image');
+          const thumbs = Array.from(target.querySelectorAll('.gallery-thumb'));
+          function show(idx) {
+            if (idx < 0) idx = images.length - 1;
+            if (idx >= images.length) idx = 0;
+            current = idx;
+            imgEl.style.opacity = 0;
+            setTimeout(() => {
+              imgEl.src = images[current];
+              imgEl.style.opacity = 1;
+              thumbs.forEach((t, i) => t.classList.toggle('active', i === current));
+              // Прокрутка миниатюры в видимую область
+              const activeThumb = thumbs[current];
+              if (activeThumb) {
+                activeThumb.scrollIntoView({behavior: 'smooth', inline: 'center', block: 'nearest'});
+              }
+            }, 120);
+          }
+          target.querySelector('.gallery-arrow.left').onclick = () => show(current - 1);
+          target.querySelector('.gallery-arrow.right').onclick = () => show(current + 1);
+          thumbs.forEach((thumb, i) => {
+            thumb.onclick = () => show(i);
+          });
+        }
+        // Запуск после загрузки DOM и небольшой задержки (для подгрузки картинок)
+        setTimeout(buildCustomGalleryFromTilda, 1000);
+
+        // === Перенос условий из таба в карточки complex-invest ===
+        function fillInvestCardsFromTab() {
+          var tabItem = document.querySelector('.t-store__tabs__item[data-tab-title="Условия"] .t-store__tabs__content');
+          var cardList = document.querySelector('#complex-invest .card-list');
+          if (tabItem && cardList) {
+            var html = tabItem.innerHTML;
+            // Разбить по <br> или по \n (на случай разных вариантов)
+            var lines = html.split(/<br\s*\/??\s*>|\n/).map(function(line) {
+              return line.replace(/<[^>]+>/g, '').trim();
+            }).filter(function(line) { return line.length > 0; });
+            if (lines.length >= 2) {
+              cardList.innerHTML = '';
+              for (let i = 0; i < 4; i++) {
+                var title = lines[i*2] || '';
+                var caption = lines[i*2+1] || '';
+                var card = document.createElement('div');
+                card.className = 'card';
+                var row = document.createElement('div');
+                row.className = 'invest-card-row';
+                var img = document.createElement('img');
+                img.className = 'invest-card-img';
+                img.src = 'https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/comfort.png';
+                img.alt = '';
+                row.appendChild(img);
+                var titleDiv = document.createElement('div');
+                titleDiv.className = 'invest-card-title';
+                titleDiv.textContent = title;
+                row.appendChild(titleDiv);
+                card.appendChild(row);
+                var captionDiv = document.createElement('div');
+                captionDiv.className = 'invest-card-caption';
+                captionDiv.textContent = caption;
+                card.appendChild(captionDiv);
+                cardList.appendChild(card);
+              }
+            }
+          }
+        }
+        setTimeout(fillInvestCardsFromTab, 500);
+
+        // Прокрутка к форме по кнопке "Получить консультацию"
+        var consultBtn = document.getElementById('consultation-button');
+        if (consultBtn) {
+          consultBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var formSection = document.getElementById('complex-form');
+            if (formSection) {
+              formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          });
+        }
+
+        // === Перемещение about-img-wrapper под характеристиками на мобилке ===
+        function moveAboutImgMobile() {
+          if (window.innerWidth <= 600) {
+            var about = document.getElementById('complex-about');
+            var img = about && about.querySelector('.about-img-wrapper');
+            var charcs = document.getElementById('complex-charcs-placeholder');
+            if (about && img && charcs && img.nextElementSibling !== charcs) {
+              // Переносим img после charcs
+              charcs.parentNode.insertBefore(img, charcs.nextSibling);
+            }
+          } else {
+            // На десктопе возвращаем img на первое место
+            var about = document.getElementById('complex-about');
+            var img = about && about.querySelector('.about-img-wrapper');
+            var text = about && about.querySelector('.about-text');
+            if (about && img && text && about.firstElementChild !== img) {
+              about.insertBefore(img, text);
+            }
+          }
+        }
+        window.addEventListener('DOMContentLoaded', moveAboutImgMobile);
+        window.addEventListener('resize', moveAboutImgMobile);
+      });
+    </script>
+  </body>
+  </html>
