@@ -1,0 +1,116 @@
+<!-- Стили для скрытия и раскрытия параметров фильтра -->
+<!-- Подключение шрифта Inter -->
+<link href="https://fonts.googleapis.com/css?family=Inter:400&display=swap" rel="stylesheet">
+<style>
+.t-store__filter__item-controls-wrap {
+  display: none !important;
+  transition: max-height 0.3s;
+}
+.t-store__filter__item.open .t-store__filter__item-controls-wrap {
+  display: block !important;
+}
+.t-store__filter__item-title {
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  padding-right: 0;
+  position: relative;
+  font-family: 'Inter', Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.01em !important;
+}
+.filter-arrow {
+  display: inline-block;
+  margin-left: 5px;
+  width: 9px;
+  height: 9px;
+  transition: transform 0.3s;
+}
+.t-store__filter__item.open .filter-arrow {
+  transform: rotate(90deg);
+}
+
+/* Стили для строки поиска */
+.t-store__search-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.t-store__filter__input.js-store-filter-search {
+  width: 100%;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #b3b3b3;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid #222;
+  outline: none;
+  padding: 0 36px 2px 0;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  border-radius: 0;
+}
+.t-store__filter__input.js-store-filter-search::placeholder {
+  color: #b3b3b3;
+  opacity: 1;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+.t-store__search-icon.js-store-filter-search-btn {
+  position: absolute;
+  right: 0;
+  top: 7px;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+.t-store__search-close-icon.js-store-filter-search-close {
+  display: none;
+}
+</style>
+
+<!-- Скрипт для раскрытия/скрытия параметров по клику на заголовок и добавления SVG-стрелки -->
+<script>
+    // Функция для навешивания обработчиков на все title и добавления SVG-стрелки
+    function bindFilterAccordion() {
+      document.querySelectorAll('.t-store__filter__item-title').forEach(function(title) {
+        // Добавляем стрелку, если её ещё нет
+        if (!title.querySelector('.filter-arrow')) {
+          var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('class', 'filter-arrow');
+          svg.setAttribute('width', '9');
+          svg.setAttribute('height', '9');
+          svg.setAttribute('viewBox', '0 0 9 9');
+          svg.innerHTML = '<polyline points="1,3 4.5,6 8,3" style="fill:none;stroke:#222;stroke-width:2"/>';
+          title.appendChild(svg);
+        }
+        // Чтобы не навешивать повторно
+        if (title.dataset.accordionBound) return;
+        title.dataset.accordionBound = "true";
+        title.addEventListener('click', function() {
+          var filterItem = title.closest('.t-store__filter__item');
+          if (!filterItem) return;
+          filterItem.classList.toggle('open');
+          // Явно управляем display для совместимости с Тильдой
+          var controls = filterItem.querySelector('.t-store__filter__item-controls-wrap');
+          if (controls) {
+            if (filterItem.classList.contains('open')) {
+              controls.style.display = 'block';
+            } else {
+              controls.style.display = 'none';
+            }
+          }
+        });
+      });
+    }
+    
+    // Первый запуск
+    document.addEventListener('DOMContentLoaded', bindFilterAccordion);
+    // Периодически проверяем на случай динамической подгрузки фильтров
+    setInterval(bindFilterAccordion, 1000);
+    </script>

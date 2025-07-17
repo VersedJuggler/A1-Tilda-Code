@@ -412,6 +412,11 @@
         border-bottom: 1px solid #000;
         padding-bottom: 12px;
       }
+      @media (max-width: 600px) {
+        #complex-charcs-placeholder p.t-typography__characteristics.js-store-prod-charcs {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.5) !important;
+        }
+      }
         #complex-charcs-placeholder .char-key {
           font-weight: 500;
           word-break: normal;
@@ -475,6 +480,16 @@
         display: block;
         content: "";
       }
+
+      #complex-comfort .card .card-desc {
+        word-break: break-word;
+        hyphens: auto;
+        overflow-wrap: anywhere;
+        font-size: 16px;
+        line-height: 1.4;
+        color: rgba(0, 0, 0, 0.7);
+      }
+
       #complex-comfort.grid-2 {
         align-items: center;
       }
@@ -688,50 +703,26 @@
           top: 0;
           left: 0;
         }
-        .about-overlay-card {
-          width: 90vw;
-          min-width: 0;
-          max-width: 95vw;
-          min-height: 0;
-          height: auto;
+        /* Удаляем about-overlay-card и её стили */
+        .about-overlay-card, .about-overlay-card * {
+          display: none !important;
+        }
+        /* Новая мобильная картинка по центру */
+        .about-img-mobile-center {
+          position: absolute;
           left: 50%;
           top: 50%;
-          right: auto;
-          bottom: auto;
           transform: translate(-50%, -50%);
-          border-radius: 16px;
+          max-width: 300px;
+          max-height: 162px;
+          width: 100%;
+          height: auto;
+          border-radius: 8px;
+          z-index: 3;
           box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
           background: #fff;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          justify-content: flex-start;
-          padding: 24px 20px 18px 20px;
-          z-index: 2;
-          box-sizing: border-box;
-        }
-        .about-overlay-card .about-overlay-row {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 10px;
-          width: 100%;
-          margin-bottom: 27px;
-        }
-        .about-overlay-icon {
-          position: static !important;
-          width: 32px !important;
-          height: 32px !important;
-          margin: 0 !important;
-          display: block !important;
-          margin-right: 21.5px !important;
-        }
-        .about-overlay-caption {
-          font-size: 13px;
-          color: #444;
-          line-height: 1.25;
-          margin: 0;
-          font-weight: 400;
+          object-fit: contain;
+          display: block;
         }
       }
 
@@ -1404,6 +1395,47 @@
           display: none !important;
         }
       }
+            @media (max-width: 600px) {
+        .about-img-wrapper > img.about-img-mobile-center {
+          display: block !important;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          max-width: 300px;
+          max-height: 162px;
+          width: auto !important;
+          height: auto !important;
+          min-width: 0 !important;
+          min-height: 0 !important;
+          border-radius: 8px;
+          z-index: 3;
+          box-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
+          background: #fff;
+          object-fit: contain;
+        }
+        .about-img-wrapper > img:not(.about-img-mobile-center) {
+          min-height: 490px;
+          max-height: 490px;
+          height: 100% !important;
+          width: 100%;
+          object-fit: cover;
+          object-position: center;
+          border-radius: 8px;
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+        .about-overlay-card, .about-overlay-card * {
+          display: none !important;
+        }
+      }
+      @media (min-width: 601px) {
+        .about-img-wrapper > img.about-img-mobile-center {
+          display: none !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1434,6 +1466,8 @@
     <div class="section grid-2" id="complex-about">
       <div class="about-img-wrapper">
         <img src="building.jpg" alt="Жилой комплекс">
+        <!-- Мобильная версия: центрированная картинка, скрыта по умолчанию -->
+        <img class="about-img-mobile-center" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/sdelka.png" alt="Безопасная сделка" style="display:none;" />
         <div class="about-overlay-card">
           <div class="about-overlay-row">
             <img class="about-overlay-icon" src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/ComplexPage/safety.png" alt="Безопасная сделка">
@@ -1619,6 +1653,25 @@
         }
         return !!(bullet1 || bullet2);
       }
+
+              // === Подстановка краткого описания из таба "Краткое описание" в complex-header-inner ===
+        function fillShortDescriptionFromTab() {
+          var tabItem = document.querySelector('.t-store__tabs__item[data-tab-title="Краткое описание"] .t-store__tabs__content');
+          var headerShortDesc = document.querySelector("#complex-header .complex-header-inner .text p");
+          if (tabItem && headerShortDesc) {
+            // Берём только первую строку (до <br> или до конца)
+            var html = tabItem.innerHTML;
+            var lines = html.split(/<br\s*\/?>|\n/).map(function(line) {
+              return line.replace(/<[^>]+>/g, '').trim();
+            }).filter(function(line) { return line.length > 0; });
+            if (lines.length > 0) {
+              headerShortDesc.textContent = lines[0];
+              return;
+            }
+          }
+          // Фоллбек: оставить как есть (ничего не менять)
+        }
+        setTimeout(fillShortDescriptionFromTab, 500);
 
       document.addEventListener("DOMContentLoaded", function() {
         /** 1. Преобразование цены в «от X.X млн.» и класс price-millions */
