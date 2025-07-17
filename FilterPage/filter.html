@@ -2,13 +2,80 @@
 <!-- Подключение шрифта Inter -->
 <link href="https://fonts.googleapis.com/css?family=Inter:400&display=swap" rel="stylesheet">
 <style>
+/* --- Keyframe animations for filter tags --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+        max-width: 0;
+        padding-left: 0;
+        padding-right: 0;
+        margin-right: 0;
+        border-width: 0;
+    }
+}
+
+@keyframes fadeOutAndCollapse {
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+        max-width: 0;
+        padding-left: 0;
+        padding-right: 0;
+        margin-right: 0;
+        border-width: 0;
+    }
+}
+
+/* Classes to trigger the animations */
+.t-store__filter__chosen-val {
+    /* Base styles are already set below, this is for animation control */
+    transition: background-color 0.2s; /* Keep the hover effect smooth */
+}
+.t-store__filter__chosen-val.is-adding {
+    animation: fadeIn 0.35s ease-out;
+}
+.t-store__filter__chosen-val.is-removing {
+    animation: fadeOutAndCollapse 0.35s ease-out forwards;
+}
+
+
+/* Стили для выпадающего списка фильтра и плавной анимации (Версия 8, Clip-Path) */
 .t-store__filter__item-controls-wrap {
-  display: none !important;
-  transition: max-height 0.3s;
+    /* Убрали все начальные состояния анимации отсюда, 
+       оставили только базовые стили контейнера.
+       Tilda сама управляет display:none/flex. Мы будем это перехватывать.
+    */
+    position: absolute !important;
+    top: calc(100% + 10px) !important;
+    left: 0 !important;
+    z-index: 1000 !important;
+    min-width: 250px !important;
+    background-color: #ffffff !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    padding: 15px !important;
+    border: 1px solid #eee !important;
+    
+    /* --- New layout rules for vertical stacking --- */
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+
+    /* --- Анимация (Высокопроизводительная версия) --- */
+    transition: clip-path 0.3s ease-out, opacity 0.17s ease-in;
+    opacity: 0;
+    clip-path: inset(0 0 100% 0); /* Скрываем, "схлопывая" до нуля по высоте */
+    pointer-events: none; /* Делаем некликабельным в скрытом состоянии */
 }
-.t-store__filter__item.open .t-store__filter__item-controls-wrap {
-  display: block !important;
+
+/* --- Класс для открытого состояния (управляется через JS) --- */
+.t-store__filter__item-controls-wrap.is-open-final {
+    opacity: 1;
+    clip-path: inset(0 0 0 0); /* Раскрываем до полной высоты */
+    pointer-events: auto; /* Возвращаем кликабельность */
 }
+
 .t-store__filter__item-title {
   cursor: pointer;
   user-select: none;
@@ -31,6 +98,136 @@
 .t-store__filter__item.open .filter-arrow {
   transform: rotate(90deg);
 }
+
+/* --- Styles for our NEW custom container --- */
+
+/* This is our new, custom-made parent container */
+.our-super-filter-container {
+  display: flex !important;
+  /* Changed to column to stack filter rows */
+  flex-direction: column !important; 
+  gap: 25px !important; /* Gap between main filters and chosen filters */
+  margin-bottom: 30px !important;
+}
+
+/* New wrapper for the top row (filters + search/sort) */
+.our-top-row-wrapper {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    gap: 30px !important;
+    width: 100% !important;
+}
+
+/* --- Styles for the CHOSEN filters bar --- */
+
+/* The bar itself, once moved inside our container */
+.our-super-filter-container .t-store__filter__chosen-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    width: 100% !important;
+    position: relative !important;
+    /* --- Removing unwanted Tilda styles --- */
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* Hide the "Found: X" part */
+.our-super-filter-container .t-store__filter__prods-number {
+    display: none !important;
+}
+
+/* Style for the "Clear all" button */
+.our-super-filter-container .t-store__filter__reset {
+    background-color: transparent !important;
+    color: #999 !important;
+    text-decoration: none !important; /* Removed underline */
+    font-size: 14px !important;
+    padding: 8px 0 !important;
+}
+.our-super-filter-container .t-store__filter__reset:hover {
+    color: #222 !important;
+}
+
+/* Individual chosen filter tags */
+.t-store__filter__chosen-val {
+    background-color: #f0f0f0 !important;
+    color: #222 !important;
+    border-radius: 30px !important;
+    padding: 8px 15px !important;
+    font-size: 14px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+    overflow: hidden; /* Important for the collapse animation */
+    white-space: nowrap; /* Prevent text wrapping during collapse */
+    max-width: 400px; /* Base max-width for collapse animation */
+}
+.t-store__filter__chosen-val:hover {
+    background-color: #e0e0e0 !important;
+}
+
+/* --- Replacing Tilda's '×' icon with our own --- */
+
+/* 1. Hide Tilda's non-functional icon */
+.t-store__filter__chosen-val::after {
+    display: none !important;
+}
+
+/* 2. Style for our new SPAN element that we will inject via JS */
+.our-custom-close-icon {
+    font-size: 18px;
+    margin-right: 8px;
+    line-height: 1;
+    color: #555;
+    font-weight: bold;
+}
+
+
+/* Left block: filters container (INSIDE our new container) */
+.our-super-filter-container .t-store__filter__options {
+  display: flex !important;
+  flex-wrap: wrap !important; /* This is the key rule */
+  gap: 15px 20px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  max-width: 750px !important; /* New rule to enforce wrapping */
+}
+
+/* Individual filter items to prevent them from shrinking and their text from wrapping */
+.our-super-filter-container .t-store__filter__item {
+    flex-shrink: 0 !important;
+}
+.our-super-filter-container .t-store__filter__item-title {
+    white-space: nowrap !important;
+}
+
+/* Hide Tilda's native arrow on filter titles */
+.t-store__filter__item-title::after {
+    display: none !important;
+}
+
+
+/* Right block: search and sort wrapper (INSIDE our new container) */
+.our-super-filter-container .search-sort-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 15px !important;
+    flex-shrink: 0 !important;
+}
+
+/* --- End of new styles --- */
+
+
+/* Hide original Tilda containers that we are replacing */
+.t-store__filter-container, .t951__sidebar, .t-store__filter__search-and-sort {
+    display: none !important;
+}
+
 
 /* Стили для строки поиска */
 .t-store__search-wrapper {
@@ -63,20 +260,297 @@
 .t-store__search-icon.js-store-filter-search-btn {
   position: absolute;
   right: 0;
-  top: 7px;
-  width: 22px;
-  height: 22px;
-  pointer-events: none;
+  width: 12px;
+  height: 12px;
+  background: none;
+  border: none;
+  padding: 0;
   opacity: 0.5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.t-store__search-icon.js-store-filter-search-btn svg {
+  width: 12px;
+  height: 12px;
+  margin-bottom: 7px;
+  display: block;
 }
 .t-store__search-close-icon.js-store-filter-search-close {
   display: none;
+}
+
+/* Стили для кастомного селекта сортировки */
+.t-store__sort-select-wrapper {
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+.t-store__sort-select-wrapper .t-store__sort-select {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0 !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  cursor: pointer !important;
+}
+
+/* Скрываем псевдо-элемент стрелки от Тильды */
+.t-store__sort-select-wrapper::after {
+    display: none !important;
+}
+
+/* Анимация для стрелки селекта */
+.t-store__sort-select-wrapper.open .filter-arrow {
+    transform: rotate(90deg);
+}
+
+/* Стили для нового макета верхней панели */
+.t-store__filter {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 15px 30px !important; /* row and column gap */
+    align-items: center !important;
+    flex-grow: 1;
+}
+
+.t-store__filter-form, .t-store__filter__options {
+    display: contents !important;
+}
+
+.t-store__filter__item {
+    position: relative !important;
+    margin: 0 !important;
+}
+
+.search-and-sort-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Расстояние между поиском и сортировкой */
+    flex-shrink: 0;
+}
+
+/* Скрываем ненужные элементы на десктопе */
+.t-store__filter__buttons-wrapper {
+    display: none !important;
+}
+
+/* 
+  Убираем неработающее CSS правило, переходим к чистому JS решению.
+*/
+/*
+.t-store__filter__search-and-sort .t-store__filter__item {
+    display: flex !important;
+    align-items: center !important;
+}
+*/
+
+.custom-sort-display {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Inter', Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.01em !important;
+  background-color: white !important;
+  user-select: none;
+  padding: 0;
+  white-space: nowrap !important; /* New rule to prevent wrapping */
 }
 </style>
 
 <!-- Скрипт для раскрытия/скрытия параметров по клику на заголовок и добавления SVG-стрелки -->
 <script>
-    // Функция для навешивания обработчиков на все title и добавления SVG-стрелки
+    // --- START: New function to animate the "Clear All" button action ---
+    function enhanceClearAllButton() {
+        const clearBtn = document.querySelector('.t-store__filter__reset.js-store-filter-reset');
+        if (!clearBtn || clearBtn.dataset.clearEnhanced) return;
+
+        clearBtn.dataset.clearEnhanced = 'true';
+
+        // The key is the third argument: { capture: true }.
+        // This makes our listener fire during the "capture" phase (as the event travels down),
+        // guaranteeing it runs before Tilda's default listener (which is in the "bubble" phase).
+        clearBtn.addEventListener('click', (e) => {
+            // The "triple lock": stop everything. This ensures Tilda's script never runs.
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+
+            const allTags = document.querySelectorAll('.t-store__filter__chosen-val:not(.is-removing)');
+
+            if (allTags.length === 0) {
+                return;
+            }
+            
+            const animationPromises = Array.from(allTags).map(tag => {
+                return new Promise(resolve => {
+                    tag.addEventListener('animationend', resolve, { once: true });
+                });
+            });
+
+            allTags.forEach(tag => {
+                tag.classList.add('is-removing');
+            });
+
+            Promise.all(animationPromises).then(() => {
+                const checkedInputs = document.querySelectorAll('.js-store-filter-opt-chb:checked');
+                checkedInputs.forEach(input => {
+                    input.click();
+                });
+            });
+        }, { capture: true }); // <-- THIS IS THE CRITICAL CHANGE
+    }
+
+    // --- START: New function to make filter tags functional and animated ---
+    function enhanceChosenFilters() {
+        // Animate newly added tags
+        const newItems = document.querySelectorAll('.t-store__filter__chosen-val:not([data-enhanced])');
+        
+        newItems.forEach(item => {
+            // Mark as enhanced to prevent processing it again.
+            item.dataset.enhanced = 'true';
+
+            // Animate its appearance
+            item.classList.add('is-adding');
+            item.addEventListener('animationend', () => {
+                item.classList.remove('is-adding');
+            }, { once: true });
+
+            // Create our custom close icon as a real SPAN element.
+            const closeIcon = document.createElement('span');
+            closeIcon.className = 'our-custom-close-icon';
+            closeIcon.textContent = '×';
+
+            // Add a click listener to our icon for the REMOVAL animation.
+            closeIcon.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                // 1. Add the removal class to trigger the animation.
+                item.classList.add('is-removing');
+
+                // 2. Wait for the animation to finish.
+                item.addEventListener('animationend', () => {
+                    // 3. Find the original checkbox and click it to ACTUALLY remove the filter.
+                    const filterValue = item.getAttribute('data-field-val');
+                    if (!filterValue) return;
+
+                    const correspondingInput = document.querySelector(`.js-store-filter-opt-chb[data-filter-value="${CSS.escape(filterValue)}"]`);
+                    if (correspondingInput) {
+                        correspondingInput.click();
+                    } else {
+                        // Fallback for non-checkbox filters
+                        const mouseDownEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window });
+                        const mouseUpEvent = new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window });
+                        item.dispatchEvent(mouseDownEvent);
+                        item.dispatchEvent(mouseUpEvent);
+                    }
+                }, { once: true });
+            });
+
+            // Add our icon to the item.
+            item.prepend(closeIcon);
+        });
+    }
+    // --- END: New function ---
+
+    // --- START: New, improved accordion logic ---
+
+    // This function handles the logic for opening and closing filter accordions.
+    function setupFilterAccordion() {
+        const allFilterTitles = document.querySelectorAll('.t-store__filter__item-title');
+
+        allFilterTitles.forEach(title => {
+            if (title.dataset.accordionBound) {
+                return;
+            }
+            title.dataset.accordionBound = 'true';
+
+            // SVG-стрелка (без изменений)
+            if (!title.querySelector('.filter-arrow')) {
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('class', 'filter-arrow');
+                svg.setAttribute('width', '9');
+                svg.setAttribute('height', '9');
+                svg.setAttribute('viewBox', '0 0 9 9');
+                svg.innerHTML = '<polyline points="1,3 4.5,6 8,3" style="fill:none;stroke:#222;stroke-width:2"/>';
+                title.appendChild(svg);
+            }
+
+            title.addEventListener('click', (event) => {
+                const currentItem = title.closest('.t-store__filter__item');
+                const controlsWrap = currentItem.querySelector('.t-store__filter__item-controls-wrap');
+                if (!controlsWrap) return;
+
+                const isCurrentlyOpen = currentItem.classList.contains('open');
+
+                // --- Сначала закрываем ВСЕ открытые в данный момент фильтры ---
+                document.querySelectorAll('.t-store__filter__item.open').forEach(openItem => {
+                    const openControls = openItem.querySelector('.t-store__filter__item-controls-wrap');
+                    if (openControls) {
+                        openItem.classList.remove('open');
+                        openControls.classList.remove('is-open-final');
+                        
+                        // Добавляем слушатель, чтобы сбросить display ПОСЛЕ анимации
+                        openControls.addEventListener('transitionend', () => {
+                            // Проверяем, что за время анимации его не открыли снова
+                            if (!openControls.classList.contains('is-open-final')) {
+                                openControls.style.display = '';
+                            }
+                        }, { once: true });
+                    }
+                });
+
+                // --- Если тот, на который кликнули, не был открыт - открываем его ---
+                if (!isCurrentlyOpen) {
+                    // **КАДР 1: Заставляем браузер "увидеть" элемент**
+                    controlsWrap.style.display = 'flex';
+                    currentItem.classList.add('open'); // Анимация стрелки
+
+                    // **КАДР 2: Запускаем саму анимацию**
+                    setTimeout(() => {
+                        controlsWrap.classList.add('is-open-final');
+                    }, 0);
+                }
+                // Если он был открыт, то цикл выше уже запустил его закрытие.
+            });
+        });
+    }
+    
+    // Глобальный обработчик клика для закрытия (уже использует правильную логику)
+    if (!window.filterAccordionDocumentListenerAdded) {
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('.t-store__filter__item')) {
+                return;
+            }
+            document.querySelectorAll('.t-store__filter__item.open').forEach(item => {
+                item.classList.remove('open');
+                const controls = item.querySelector('.t-store__filter__item-controls-wrap');
+                if (controls) {
+                    controls.classList.remove('is-open-final');
+                    // Важно: ждем окончания анимации, прежде чем позволить Tilda снова скрыть элемент
+                    controls.addEventListener('transitionend', () => {
+                        // Проверяем, что он все еще должен быть скрыт
+                        if (!controls.classList.contains('is-open-final')) {
+                             controls.style.display = '';
+                        }
+                    }, { once: true });
+                }
+            });
+        });
+        window.filterAccordionDocumentListenerAdded = true;
+    }
+
+    // --- END: New, improved accordion logic ---
+
+
+    // Функция для навешивания обработчиков на все title и добавления SVG-стрелки - DEPRECATED
+    /*
     function bindFilterAccordion() {
       document.querySelectorAll('.t-store__filter__item-title').forEach(function(title) {
         // Добавляем стрелку, если её ещё нет
@@ -89,28 +563,186 @@
           svg.innerHTML = '<polyline points="1,3 4.5,6 8,3" style="fill:none;stroke:#222;stroke-width:2"/>';
           title.appendChild(svg);
         }
-        // Чтобы не навешивать повторно
-        if (title.dataset.accordionBound) return;
-        title.dataset.accordionBound = "true";
-        title.addEventListener('click', function() {
-          var filterItem = title.closest('.t-store__filter__item');
-          if (!filterItem) return;
-          filterItem.classList.toggle('open');
-          // Явно управляем display для совместимости с Тильдой
-          var controls = filterItem.querySelector('.t-store__filter__item-controls-wrap');
-          if (controls) {
-            if (filterItem.classList.contains('open')) {
-              controls.style.display = 'block';
-            } else {
-              controls.style.display = 'none';
-            }
-          }
+        
+        // Удаляем старый обработчик, чтобы избежать дублирования, если это возможно
+        // (Это не очень надежный способ, но лучше, чем ничего)
+        // title.removeEventListener('click', arguments.callee);
+
+        // Добавляем новый обработчик
+        title.addEventListener('click', function(event) {
+          event.stopPropagation();
+          var item = title.closest('.t-store__filter__item');
+          item.classList.toggle('open');
         });
       });
     }
+    */
+    
+    function customizeSortDropdown() {
+        const selectWrapper = document.querySelector('.t-store__sort-select-wrapper');
+        if (!selectWrapper) return;
+
+        // Если уже обработано, пропускаем
+        if (selectWrapper.dataset.customized) return;
+        selectWrapper.dataset.customized = 'true';
+
+        var select = selectWrapper.querySelector('.t-store__sort-select');
+        if (!select) return;
+
+        // Переменная для отслеживания состояния (открыт/закрыт)
+        var isSelectOpen = false;
+
+        // Создаем кастомный элемент для отображения
+        var customDisplay = document.createElement('div');
+        customDisplay.className = 'custom-sort-display';
+        
+        var textSpan = document.createElement('span');
+        textSpan.className = 'custom-sort-text';
+
+        // Создаем стрелку
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'filter-arrow');
+        svg.setAttribute('width', '9');
+        svg.setAttribute('height', '9');
+        svg.setAttribute('viewBox', '0 0 9 9');
+        svg.innerHTML = '<polyline points="1,3 4.5,6 8,3" style="fill:none;stroke:#222;stroke-width:2"/>';
+
+        customDisplay.appendChild(textSpan);
+        customDisplay.appendChild(svg);
+        selectWrapper.prepend(customDisplay); // Добавляем в начало враппера
+
+        // Новые, более надежные обработчики для анимации стрелки
+        select.addEventListener('focus', function() {
+          selectWrapper.classList.add('open');
+          isSelectOpen = true;
+        });
+
+        select.addEventListener('blur', function() {
+          selectWrapper.classList.remove('open');
+          isSelectOpen = false;
+        });
+
+        // Этот хак решает проблему "второго клика" и выбора опции
+        select.addEventListener('mousedown', function(e) {
+          if (isSelectOpen) {
+            // Отменяем стандартное поведение, чтобы избежать "залипания"
+            e.preventDefault();
+            // Искусственно вызываем blur, чтобы сработал наш listener
+            select.blur();
+          }
+        });
+
+        // Функция для обновления текста
+        function updateText() {
+          var selectedOption = select.options[select.selectedIndex];
+          textSpan.textContent = selectedOption.textContent;
+        }
+
+        // Первичная установка текста
+        updateText();
+        
+        // Обновляем текст и принудительно закрываем селект при выборе опции
+        select.addEventListener('change', function() {
+          updateText();
+          // Явно убираем класс 'open' после выбора, чтобы стрелка вернулась в исходное положение
+          selectWrapper.classList.remove('open');
+          isSelectOpen = false;
+        });
+    }
+
+    function moveAndLayoutFilters() {
+        // ---- Part 1: One-time setup for the main layout ----
+        if (!document.querySelector('.our-super-filter-container')) {
+            const tildaTopBar = document.querySelector('.t-store__filter__search-and-sort');
+            // If the main Tilda bar isn't there, we can't do anything yet.
+            if (!tildaTopBar) return;
+
+            // Find all the pieces we need to move
+            const filtersContainer = document.querySelector('.t-store__filter__options');
+            const searchBox = document.querySelector('.t-store__filter__search');
+            const sortBox = document.querySelector('.t-store__filter__sort');
+
+            // If any piece is missing, we also can't proceed
+            if (!filtersContainer || !searchBox || !sortBox) {
+                return;
+            }
+
+            // Create OUR new main container
+            const newContainer = document.createElement('div');
+            newContainer.className = 'our-super-filter-container';
+
+            // Create the top row wrapper
+            const topRowWrapper = document.createElement('div');
+            topRowWrapper.className = 'our-top-row-wrapper';
+
+            // Create the right-side wrapper for search and sort
+            const searchSortWrapper = document.createElement('div');
+            searchSortWrapper.className = 'search-sort-wrapper';
+            searchSortWrapper.appendChild(searchBox);
+            searchSortWrapper.appendChild(sortBox);
+            
+            // Assemble the top row
+            topRowWrapper.appendChild(filtersContainer); 
+            topRowWrapper.appendChild(searchSortWrapper);
+
+            // Assemble our new main container
+            newContainer.appendChild(topRowWrapper);
+            
+            // Insert our new container into the DOM
+            tildaTopBar.parentNode.insertBefore(newContainer, tildaTopBar);
+            
+            // Hide the original Tilda bar
+            tildaTopBar.style.display = 'none';
+        }
+
+        // ---- Part 2: Continuous updates for dynamic elements ----
+
+        // Move the chosen bar if it appears and hasn't been moved yet
+        const chosenBar = document.querySelector('.t-store__filter__chosen-bar:not(.is-moved)');
+        if (chosenBar) {
+            const ourContainer = document.querySelector('.our-super-filter-container');
+            if (ourContainer) {
+                ourContainer.appendChild(chosenBar);
+                chosenBar.classList.add('is-moved');
+            }
+        }
+
+        // Enhance any new tags, buttons, etc. that have appeared
+        enhanceChosenFilters();
+        enhanceClearAllButton();
+    }
     
     // Первый запуск
-    document.addEventListener('DOMContentLoaded', bindFilterAccordion);
-    // Периодически проверяем на случай динамической подгрузки фильтров
-    setInterval(bindFilterAccordion, 1000);
+    document.addEventListener('DOMContentLoaded', function() {
+        setupFilterAccordion(); // Call the new setup function
+        customizeSortDropdown();
+        moveAndLayoutFilters();
+    });
+
+    // Периодически проверяем на случай динамической подгрузки
+    const observer = new MutationObserver((mutationsList, observer) => {
+        // Look for additions of nodes that might be the filter container
+        for(const mutation of mutationsList) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                if (document.querySelector('.t-store__filter__options')) {
+                    moveAndLayoutFilters();
+                    setupFilterAccordion(); // Call the new setup function
+                    customizeSortDropdown();
+                }
+            }
+        }
+        // Also run bind just in case
+        setupFilterAccordion(); // Call the new setup function
+        customizeSortDropdown();
+    });
+
+    // Start observing the document body for changes
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Fallback interval just in case
+    setInterval(() => {
+        moveAndLayoutFilters();
+        setupFilterAccordion(); // Call the new setup function
+        customizeSortDropdown();
+    }, 1000);
     </script>
