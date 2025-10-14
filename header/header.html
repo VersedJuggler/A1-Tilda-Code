@@ -52,8 +52,8 @@
 
             // определяем, нужен ли минус-иконка
             const showToggleIcon = label === "Выбрать услугу" || label === "Выбрать недвижимость";
-            const plusIcon = "https://storage.yandexcloud.net/a1-broker/plus_icon.svg";
-            const minusIcon = "https://storage.yandexcloud.net/a1-broker/minus_icon.svg";
+            const plusIcon = "https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/Group%20%2B.svg";
+            const minusIcon = "https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/Vector%20-.svg";
 
             const handleMouseOver = () => {
                 if (closeTimer.current) {
@@ -92,18 +92,18 @@
                     className="flex relative gap-3 items-center h-full"
                 >
                     {showToggleIcon ? (
-                        <span className="relative w-6 h-6 flex items-center justify-center">
+                        <span className="relative" style={{ width: '13.5px', height: '13.5px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
                             <img
                                 src={plusIcon}
                                 alt="plus"
-                                className={`absolute left-0 top-0 w-6 h-6 transition-opacity duration-300 ${isOpen ? 'opacity-0' : 'opacity-100'}`}
-                                style={{ pointerEvents: 'none' }}
+                                className={`absolute left-0 top-0 transition-opacity duration-300 ${isOpen ? 'opacity-0' : 'opacity-100'}`}
+                                style={{ width: '13.5px', height: '13.5px', pointerEvents: 'none' }}
                             />
                             <img
                                 src={minusIcon}
                                 alt="minus"
-                                className={`absolute left-0 top-0 w-6 h-6 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
-                                style={{ pointerEvents: 'none' }}
+                                className={`absolute left-0 top-0 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+                                style={{ width: '13.5px', height: '13.5px', pointerEvents: 'none' }}
                             />
                         </span>
                     ) : (
