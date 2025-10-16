@@ -21,16 +21,15 @@
         const container = document.getElementById("header");
         const root = ReactDOM.createRoot(container);
 
-        function NavMenu({ items }) {
+        function NavMenu({ items, hideSquares }) {
             return (
                 <div>
                     <ul className="flex flex-col gap-3 !pl-0">
                         {items.map((item) => (
-                            <li
-                                key={item.href}
-                                className="flex items-center gap-4"
-                            >
-                                <div className="h-2 w-2 rounded-sm flex-none bg-black"></div>
+                            <li key={item.href} className="flex items-center gap-4">
+                                {!hideSquares && (
+                                    <div className="h-2 w-2 rounded-sm flex-none bg-black"></div>
+                                )}
                                 <a
                                     href={item.href}
                                     className="!text-black hover:!text-opacity-60 whitespace-nowrap"
@@ -51,7 +50,7 @@
             const removeTimer = React.useRef(null);
 
             // определяем, нужен ли минус-иконка
-            const showToggleIcon = label === "Выбрать услугу" || label === "Выбрать недвижимость";
+            const showToggleIcon = label === "Услуги компании" || label === "Новостройки";
             const plusIcon = "https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/Group%20%2B.svg";
             const minusIcon = "https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/Vector%20-.svg";
 
@@ -114,7 +113,7 @@
 
                     {isVisible && (
                         <div
-                            className={`absolute top-20 left-0 bg-white rounded-lg shadow-md py-4 px-4 w-fit transition-all duration-300 overflow-hidden ${isOpen ? 'opacity-100 translate-y-0 max-h-[500px]' : 'opacity-0 -translate-y-4 max-h-0 pointer-events-none'}`}
+                            className={`absolute top-[calc(100%+8px)] left-0 bg-white rounded-lg shadow-md py-4 px-4 w-fit transition-all duration-300 overflow-hidden ${isOpen ? 'opacity-100 translate-y-0 max-h-[500px]' : 'opacity-0 -translate-y-4 max-h-0 pointer-events-none'}`}
                             style={{
                                 transition: 'opacity 0.3s, transform 0.3s, max-height 0.3s',
                             }}
@@ -131,6 +130,9 @@
             const [isVisible, setVisible] = React.useState(false);
             const closeTimer = React.useRef(null);
             const removeTimer = React.useRef(null);
+
+            const burgerClosed = "https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/burger%20close.svg";
+            const burgerOpen = "https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/burger%20open.svg";
 
             const handleMouseOver = () => {
                 if (closeTimer.current) {
@@ -167,16 +169,24 @@
                     onMouseLeave={handleMouseLeave}
                     className="flex relative gap-3 items-center h-full"
                 >
-                    <img
-                        src={"https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/burger%20open.svg"}
-                        alt={"menu icon"}
-                    />
-
+                    <span className="relative flex items-center justify-center" style={{ minWidth: '24px', minHeight: '24px' }}>
+                        <img
+                            src={burgerClosed}
+                            alt="burger closed"
+                            className={`absolute left-0 top-0 transition-opacity duration-300 ${isOpen ? 'opacity-0' : 'opacity-100'}`}
+                            style={{ pointerEvents: 'none', width: '100%', height: '100%' }}
+                        />
+                        <img
+                            src={burgerOpen}
+                            alt="burger open"
+                            className={`absolute left-0 top-0 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+                            style={{ pointerEvents: 'none', width: '100%', height: '100%' }}
+                        />
+                    </span>
                     <span className="text-white hidden md:block">МЕНЮ</span>
-
                     {isVisible && (
                         <div
-                            className={`absolute top-20 right-[-1rem] md:right-[-2.5rem] bg-white rounded-lg w-fit flex flex-col shadow-md transition-all duration-300 overflow-hidden ${isOpen ? 'opacity-100 translate-y-0 max-h-[800px]' : 'opacity-0 -translate-y-4 max-h-0 pointer-events-none'}`}
+                            className={`absolute top-[calc(100%+8px)] right-[-1rem] md:right-[-2.5rem] bg-white rounded-lg w-fit flex flex-col shadow-md transition-all duration-300 overflow-hidden ${isOpen ? 'opacity-100 translate-y-0 max-h-[800px]' : 'opacity-0 -translate-y-4 max-h-0 pointer-events-none'}`}
                             style={{
                                 transition: 'opacity 0.3s, transform 0.3s, max-height 0.3s',
                             }}
@@ -184,70 +194,30 @@
                             <div className="flex flex-col md:flex-row gap-4 md:gap-16 p-4 md:p-6">
                                 <div className="flex flex-col gap-4">
                                     <h4 className="text-sm text-black text-opacity-60">
-                                        Услуги
+                                        О компании
                                     </h4>
 
                                     <NavMenu
                                         items={[
-                                            {
-                                                label: "Ипотека",
-                                                href: "https://a1-brokers.com/additional-services/mortgage",
-                                            },
-                                            {
-                                                label: "Страхование",
-                                                href: "https://a1-brokers.com/additional-services/insurance",
-                                            },
-                                            {
-                                                label: "Оценка недвижимости",
-                                                href: "https://a1-brokers.com/additional-services/property-valuation",
-                                            },
-                                        ]}
+                                        { label: "О компании", href: "https://a1-brokers.com/about-us" }, 
+                                        { label: "Контакты", href: "#" },
+                                        { label: "Сотрудники", href: "https://a1-brokers.com/teammates" }, 
+                                        { label: "Наши партнеры", href: "#" },
+                                        { label: "Вакансии", href: "#" }]}
+                                        hideSquares={true}
                                     />
                                 </div>
 
                                 <div className="flex flex-col gap-4">
                                     <h4 className="text-sm text-black text-opacity-60">
-                                        Недвижимость
+                                        Другие разделы
                                     </h4>
 
                                     <NavMenu
-                                        items={[
-                                            {
-                                                label: "Новостройки",
-                                                href: "#",
-                                            },
-                                            {
-                                                label: "Дома и участки",
-                                                href: "#",
-                                            },
-                                            {
-                                                label: "Апартаменты ОАЭ",
-                                                href: "#",
-                                            },
-                                        ]}
+                                        items={[{ label: "Медиа/блог", href: "#" }, { label: "Отзывы", href: "#" }]}
+                                        hideSquares={true}
                                     />
                                 </div>
-
-                                <NavMenu
-                                    items={[
-                                        {
-                                            label: "О компании",
-                                            href: "https://a1-brokers.com/about-us",
-                                        },
-                                        {
-                                            label: "Контакты",
-                                            href: "#",
-                                        },
-                                        {
-                                            label: "Сотрудники",
-                                            href: "https://a1-brokers.com/teammates",
-                                        },
-                                        {
-                                            label: "Новости",
-                                            href: "#",
-                                        },
-                                    ]}
-                                />
                             </div>
                             <hr className="border-black border-opacity-20" />
                             <div className="flex flex-col md:flex-row gap-4 md:gap-16 p-4 md:p-6">
@@ -258,7 +228,7 @@
 
                                     <a
                                         href="tel:+78432537989"
-                                        className="text-black"
+                                        className="text-black whitespace-nowrap"
                                     >
                                         +7 (843) 253 79 89
                                     </a>
@@ -269,8 +239,9 @@
                                         Адрес офиса
                                     </h4>
 
-                                    <p className="text-black">
-                                        Казань, ул. Чистопольская д. 88 (офис 4)
+                                    <p className="text-black whitespace-nowrap">
+                                        Казань, ул. Чистопольская
+                                        <br />д. 88 (офис 4)
                                     </p>
                                 </div>
                             </div>
@@ -329,47 +300,21 @@
 
                     <div className="flex-1 hidden md:flex h-full items-center justify-center gap-16">
                         <NavItem
-                            label="Выбрать услугу"
+                            label="Услуги компании"
                             icon="https://storage.yandexcloud.net/a1-broker/plus_icon.svg"
                             menu={
                                 <NavMenu
-                                    items={[
-                                        {
-                                            label: "Ипотека",
-                                            href: "https://a1-brokers.com/additional-services/mortgage",
-                                        },
-                                        {
-                                            label: "Страхование",
-                                            href: "https://a1-brokers.com/additional-services/insurance",
-                                        },
-                                        {
-                                            label: "Оценка недвижимости",
-                                            href: "https://a1-brokers.com/additional-services/property-valuation",
-                                        },
-                                    ]}
+                                    items={[{ label: "Оформление ипотеки", href: "" }, { label: "Страхование", href: "" }, { label: "Оценка недвижимости", href: "" }, { label: "Строительство домов", href: "" }, { label: "Аренда квартиры", href: "" }]}
                                 />
                             }
                         />
 
                         <NavItem
-                            label="Выбрать недвижимость"
+                            label="Новостройки"
                             icon="https://storage.yandexcloud.net/a1-broker/plus_icon.svg"
                             menu={
                                 <NavMenu
-                                    items={[
-                                        {
-                                            label: "Новостройки",
-                                            href: "#",
-                                        },
-                                        {
-                                            label: "Дома и участки",
-                                            href: "#",
-                                        },
-                                        {
-                                            label: "Апартаменты ОАЭ",
-                                            href: "#",
-                                        },
-                                    ]}
+                                    items={[{ label: "Казань", href: "" }, { label: "Москва", href: "" }, { label: "Санкт-Петербург", href: "" }, { label: "Сочи", href: "" }, { label: "Крым", href: "" }, { label: "Апартаменты в ОАЭ", href: "" }]}
                                 />
                             }
                         />
