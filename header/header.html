@@ -112,10 +112,12 @@
                     <span className="text-white">{label}</span>
 
                     {isVisible && (
+                        // смещаем только меню 'Услуги компании' влево на 10px
                         <div
                             className={`absolute top-[calc(100%+8px)] left-0 bg-white rounded-lg shadow-md py-4 px-4 w-fit transition-all duration-300 overflow-hidden ${isOpen ? 'opacity-100 translate-y-0 max-h-[500px]' : 'opacity-0 -translate-y-4 max-h-0 pointer-events-none'}`}
                             style={{
                                 transition: 'opacity 0.3s, transform 0.3s, max-height 0.3s',
+                                ...(label === 'Услуги компании' ? { transform: 'translateX(-15px)' } : {}),
                             }}
                         >
                             {menu}
@@ -219,14 +221,14 @@
                                         { label: "Отзывы", href: "#" }]}
                                         hideSquares={true}
                                     />
-                                    <div className="flex flex-row gap-4 mt-2">
-                                        <a href="https://wa.me/" target="_blank" rel="noopener noreferrer">
+                                    <div className="flex flex-row gap-2 mt-12">
+                                        <a href="https://wa.me/78432537989" target="_blank" rel="noopener noreferrer">
                                             <img src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/WhatsApp.png" alt="WhatsApp" className="h-8 w-8" />
                                         </a>
-                                        <a href="https://vk.com/" target="_blank" rel="noopener noreferrer">
+                                        <a href="https://vk.com/a1brokers" target="_blank" rel="noopener noreferrer">
                                             <img src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/VK.png" alt="VK" className="h-8 w-8" />
                                         </a>
-                                        <a href="https://t.me/" target="_blank" rel="noopener noreferrer">
+                                        <a href="https://t.me/a1_brokers" target="_blank" rel="noopener noreferrer">
                                             <img src="https://raw.githubusercontent.com/VersedJuggler/A1-Tilda-Code/refs/heads/main/header/img/Telegram.png" alt="Telegram" className="h-8 w-8" />
                                         </a>
                                     </div>
@@ -234,9 +236,9 @@
                                     
                             </div>
                             <hr className="border-black border-opacity-20" />
-                            <div className="flex flex-col md:flex-row gap-4 md:gap-16 p-4 md:p-6">
+                            <div className="flex flex-col md:flex-row gap-4 md:gap-10 p-4 md:p-6">
                                 <div className="flex flex-col gap-4">
-                                    <h4 className="text-sm text-black text-opacity-60">
+                                    <h4 className="text-sm text-black text-opacity-60 mb-1">
                                         Контакты
                                     </h4>
 
@@ -249,7 +251,7 @@
                                 </div>
 
                                 <div className="flex flex-col gap-4">
-                                    <h4 className="text-sm text-black text-opacity-60">
+                                    <h4 className="text-sm text-black text-opacity-60 mb-1">
                                         Адрес офиса
                                     </h4>
 
@@ -318,7 +320,7 @@
                             icon="https://storage.yandexcloud.net/a1-broker/plus_icon.svg"
                             menu={
                                 <NavMenu
-                                    items={[{ label: "Оформление ипотеки", href: "" }, { label: "Страхование", href: "" }, { label: "Оценка недвижимости", href: "" }, { label: "Строительство домов", href: "" }, { label: "Аренда квартиры", href: "" }]}
+                                    items={[{ label: "Оформление ипотеки", href: "https://a1-brokers.com/additional-services/mortgage" }, { label: "Страхование", href: "https://a1-brokers.com/additional-services/insurance" }, { label: "Оценка недвижимости", href: "https://a1-brokers.com/additional-services/property-valuation" }, { label: "Строительство домов", href: "" }, { label: "Аренда квартиры", href: "https://a1-brokers.com/additional-services/arenda" }]}
                                 />
                             }
                         />
@@ -328,14 +330,14 @@
                             icon="https://storage.yandexcloud.net/a1-broker/plus_icon.svg"
                             menu={
                                 <NavMenu
-                                    items={[{ label: "Казань", href: "" }, { label: "Москва", href: "" }, { label: "Санкт-Петербург", href: "" }, { label: "Сочи", href: "" }, { label: "Крым", href: "" }, { label: "Апартаменты в ОАЭ", href: "" }]}
+                                    items={[{ label: "Казань", href: "https://a1-brokers.com/complex-kazan" }, { label: "Москва", href: "https://a1-brokers.com/complex-moscow" }, { label: "Санкт-Петербург", href: "https://a1-brokers.com/complex-spb" }, { label: "Сочи", href: "https://a1-brokers.com/complex-sochi" }, { label: "Крым", href: "" }, { label: "Апартаменты в ОАЭ", href: "" }]}
                                 />
                             }
                         />
                     </div>
 
                     <div className="flex h-full items-center gap-12">
-                        <button className="hidden md:block bg-white flex items-center justify-center rounded py-3 px-6 text-sm">
+                        <button className="hidden md:block bg-white flex items-center justify-center rounded py-3 px-6 text-sm transform transition-transform duration-200 ease-in-out hover:scale-105">
                             Связаться
                         </button>
 
